@@ -2,7 +2,7 @@
 //
 // Package:    UserCode/CTPPSAna
 // Class:      CTPPSAna
-// 
+//
 /**\class CTPPSAna CTPPSAna.cc UserCode/CTPPSAna/plugins/CTPPSAna.cc
 
  Description: [one line class summary]
@@ -38,7 +38,7 @@
 // constructor "usesResource("TFileService");"
 // This will improve performance in multithreaded jobs.
 
-class CTPPSAna : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+class CTPPSAna : public edm::one::EDAnalyzer<>  {
    public:
       explicit CTPPSAna(const edm::ParameterSet&);
       ~CTPPSAna();
@@ -69,14 +69,14 @@ CTPPSAna::CTPPSAna(const edm::ParameterSet& iConfig)
 
 {
    //now do what ever initialization is needed
-   usesResource("TFileService");
+   //usesResource("TFileService");
 
 }
 
 
 CTPPSAna::~CTPPSAna()
 {
- 
+
    // do anything here that needs to be done at desctruction time
    // (e.g. close files, deallocate resources etc.)
 
@@ -99,7 +99,7 @@ CTPPSAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    Handle<ExampleData> pIn;
    iEvent.getByLabel("example",pIn);
 #endif
-   
+
 #ifdef THIS_IS_AN_EVENTSETUP_EXAMPLE
    ESHandle<SetupData> pSetup;
    iSetup.get<SetupRecord>().get(pSetup);
@@ -108,14 +108,14 @@ CTPPSAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 // ------------ method called once each job just before starting event loop  ------------
-void 
+void
 CTPPSAna::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
-void 
-CTPPSAna::endJob() 
+void
+CTPPSAna::endJob()
 {
 }
 
