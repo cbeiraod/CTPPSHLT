@@ -87,11 +87,11 @@ param_(iConfig)
 {
    //now do what ever initialization is needed
    //usesResource("TFileService");
-  verbosity_ = conf.getUntrackedParameter<int> ("Verbosity");
+  verbosity_ = iConfig.getUntrackedParameter<int> ("Verbosity");
 
-  srcCTPPSPixelCluster_ = conf.getParameter<edm::InputTag>("RPixClusterTag");
+  srcCTPPSPixelCluster_ = iConfig.getParameter<edm::InputTag>("RPixClusterTag");
 
-  tokenCTPPSPixelCluster_ = consumes<edm::DetSetVector<CTPPSPixelCluster> >(src_);
+  tokenCTPPSPixelCluster_ = consumes<edm::DetSetVector<CTPPSPixelCluster> >(srcCTPPSPixelCluster_);
 
 }
 
@@ -118,9 +118,9 @@ CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    edm::Handle<edm::DetSetVector<CTPPSPixelCluster> > rpCl;
    iEvent.getByToken(tokenCTPPSPixelCluster_, rpCl);
 
-   std::cout << "There are " << rpCl.size() << " clusters." << std::endl;
+   std::cout << "There are " << rpCl->size() << " clusters." << std::endl;
 
-   for (const auto &ds_cluster : input)
+   for (const auto &ds_cluster : rpCl)
    {
     std::cout << ds_cluster << std::endl;
     std::cout << ds_cluster.id << std::endl;
