@@ -122,7 +122,7 @@ CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    for (const auto &ds_cluster : (*rpCl))
    {
-    std::cout << ds_cluster << std::endl;
+    //std::cout << ds_cluster << std::endl;
     std::cout << ds_cluster.id << std::endl;
    }
 
