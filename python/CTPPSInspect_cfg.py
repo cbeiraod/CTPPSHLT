@@ -21,15 +21,18 @@ from RecoCTPPS.PixelLocal.ctppsPixelLocalReconstruction_cff import *
 # raw-to-digi conversion
 process.load("EventFilter.CTPPSRawToDigi.ctppsRawToDigi_cff")
 
-recoCTPPS = cms.Sequence(
-    totemRPLocalReconstruction *
-    ctppsDiamondLocalReconstruction *
-    ctppsPixelLocalReconstruction *
-    ctppsLocalTrackLiteProducer
-)
+# RP reconstruction chain with standard settings
+process.load("RecoCTPPS.Configuration.recoCTPPS_cff")
+
+#recoCTPPS = cms.Sequence(
+#    totemRPLocalReconstruction *
+#    ctppsDiamondLocalReconstruction *
+#    ctppsPixelLocalReconstruction *
+#    ctppsLocalTrackLiteProducer
+#)
 
 process.ctppsInspect = cms.EDAnalyzer('CTPPSInspect'
 )
 
 
-process.p = cms.Path(process.ctppsRawToDigi * recoCTPPS * process.ctppsInspect)
+process.p = cms.Path(process.ctppsRawToDigi * process.recoCTPPS * process.ctppsInspect)
