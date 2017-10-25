@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    UserCode/CTPPSAna
-// Class:      CTPPSAna
+// Package:    UserCode/CTPPSInspect
+// Class:      CTPPSInspect
 //
-/**\class CTPPSAna CTPPSAna.cc UserCode/CTPPSAna/plugins/CTPPSAna.cc
+/**\class CTPPSInspect CTPPSInspect.cc UserCode/CTPPSInspect/plugins/CTPPSInspect.cc
 
  Description: [one line class summary]
 
@@ -28,6 +28,17 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+
+#include "DataFormats/Common/interface/DetSetVector.h"
+#include "DataFormats/Common/interface/DetSet.h"
+#include "FWCore/Utilities/interface/InputTag.h"
+
+#include "DataFormats/CTPPSReco/interface/CTPPSPixelCluster.h"
+#include "DataFormats/CTPPSReco/interface/CTPPSPixelRecHit.h"
+#include "DataFormats/DetId/interface/DetId.h"
+#include "DataFormats/Common/interface/DetSetVector.h"
+#include "DataFormats/CTPPSDetId/interface/CTPPSPixelDetId.h"
+
 //
 // class declaration
 //
@@ -38,10 +49,10 @@
 // constructor "usesResource("TFileService");"
 // This will improve performance in multithreaded jobs.
 
-class CTPPSAna : public edm::one::EDAnalyzer<>  {
+class CTPPSInspect : public edm::one::EDAnalyzer<>  {
    public:
-      explicit CTPPSAna(const edm::ParameterSet&);
-      ~CTPPSAna();
+      explicit CTPPSInspect(const edm::ParameterSet&);
+      ~CTPPSInspect();
 
       static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
@@ -52,6 +63,11 @@ class CTPPSAna : public edm::one::EDAnalyzer<>  {
       virtual void endJob() override;
 
       // ----------member data ---------------------------
+      edm::ParameterSet param_;
+      int verbosity_;
+      edm::InputTag srcCTPPSPixelCluster_;
+      edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelCluster>> tokenCTPPSPixelCluster_;
+      //RPixClusterToHit cluster2hit_;
 };
 
 //
@@ -65,16 +81,22 @@ class CTPPSAna : public edm::one::EDAnalyzer<>  {
 //
 // constructors and destructor
 //
-CTPPSAna::CTPPSAna(const edm::ParameterSet& iConfig)
+CTPPSInspect::CTPPSInspect(const edm::ParameterSet& iConfig):
+param_(iConfig)
 
 {
    //now do what ever initialization is needed
    //usesResource("TFileService");
+  verbosity_ = conf.getUntrackedParameter<int> ("Verbosity");
+
+  srcCTPPSPixelCluster_ = conf.getParameter<edm::InputTag>("RPixClusterTag");
+
+  tokenCTPPSPixelCluster_ = consumes<edm::DetSetVector<CTPPSPixelCluster> >(src_);
 
 }
 
 
-CTPPSAna::~CTPPSAna()
+CTPPSInspect::~CTPPSInspect()
 {
 
    // do anything here that needs to be done at desctruction time
@@ -89,9 +111,20 @@ CTPPSAna::~CTPPSAna()
 
 // ------------ method called for each event  ------------
 void
-CTPPSAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
+
+   edm::Handle<edm::DetSetVector<CTPPSPixelCluster> > rpCl;
+   iEvent.getByToken(tokenCTPPSPixelCluster_, rpCl);
+
+   std::cout << "There are " << rpCl.size() << " clusters." << std::endl;
+
+   for (const auto &ds_cluster : input)
+   {
+    std::cout << ds_cluster << std::endl;
+    std::cout << ds_cluster.id << std::endl;
+   }
 
 
 
@@ -109,25 +142,27 @@ CTPPSAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 // ------------ method called once each job just before starting event loop  ------------
 void
-CTPPSAna::beginJob()
+CTPPSInspect::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void
-CTPPSAna::endJob()
+CTPPSInspect::endJob()
 {
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-CTPPSAna::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+CTPPSInspect::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
-  desc.setUnknown();
-  descriptions.addDefault(desc);
+  desc.addUntracked<int>("Verbosity",0);
+  desc.add<edm::InputTag>("RPixClusterTag",edm::InputTag("ctppsPixelClusters"));
+  descriptions.add("ctppsInspector", desc);
+  //descriptions.addDefault(desc);
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(CTPPSAna);
+DEFINE_FWK_MODULE(CTPPSInspect);
