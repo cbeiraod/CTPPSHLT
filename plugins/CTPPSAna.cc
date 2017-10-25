@@ -34,7 +34,7 @@
 #include "FWCore/Utilities/interface/InputTag.h"
 
 #include "DataFormats/CTPPSReco/interface/CTPPSPixelCluster.h"
-#include "DataFormats/CTPPSReco/interface/CTPPSPixelRecHit.h"
+//#include "DataFormats/CTPPSReco/interface/CTPPSPixelRecHit.h"
 #include "DataFormats/DetId/interface/DetId.h"
 #include "DataFormats/Common/interface/DetSetVector.h"
 #include "DataFormats/CTPPSDetId/interface/CTPPSPixelDetId.h"
