@@ -120,7 +120,7 @@ CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    std::cout << "There are " << rpCl->size() << " clusters." << std::endl;
 
-   for (const auto &ds_cluster : rpCl)
+   for (const auto &ds_cluster : (*rpCl))
    {
     std::cout << ds_cluster << std::endl;
     std::cout << ds_cluster.id << std::endl;
