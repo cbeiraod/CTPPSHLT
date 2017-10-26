@@ -122,8 +122,10 @@ CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    for (const auto &ds_cluster : (*rpCl))
    {
-    //std::cout << ds_cluster << std::endl;
-    std::cout << ds_cluster.id << std::endl;
+    //auto& id = ds_cluster.id;
+    //std::cout << id << ": arm-" << id.arm() << "; station-" << id.station() << "; rp-" << id.rp() << std::endl;
+    CTPPSPixelDetId id(ds_cluster.id);
+    std::cout << id << std::endl;
    }
 
 
