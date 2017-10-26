@@ -13,23 +13,15 @@ process.source = cms.Source("PoolSource",
     )
 )
 
-from RecoCTPPS.TotemRPLocal.totemRPLocalReconstruction_cff import *
-from RecoCTPPS.TotemRPLocal.ctppsDiamondLocalReconstruction_cff import *
-from RecoCTPPS.TotemRPLocal.ctppsLocalTrackLiteProducer_cff import ctppsLocalTrackLiteProducer
-from RecoCTPPS.PixelLocal.ctppsPixelLocalReconstruction_cff import *
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_hlt_relval', '')
 
 # raw-to-digi conversion
 process.load("EventFilter.CTPPSRawToDigi.ctppsRawToDigi_cff")
 
 # RP reconstruction chain with standard settings
 process.load("RecoCTPPS.Configuration.recoCTPPS_cff")
-
-#recoCTPPS = cms.Sequence(
-#    totemRPLocalReconstruction *
-#    ctppsDiamondLocalReconstruction *
-#    ctppsPixelLocalReconstruction *
-#    ctppsLocalTrackLiteProducer
-#)
 
 process.ctppsInspect = cms.EDAnalyzer('CTPPSInspect'
 )
