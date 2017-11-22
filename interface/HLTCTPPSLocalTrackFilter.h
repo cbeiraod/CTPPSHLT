@@ -33,10 +33,10 @@ private:
   edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelLocalTrack>> pixelLocalTrackToken_;
 
   edm::InputTag stripLocalTrackInputTag_; // Input tag identifying the strip detector
-  edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelCluster>> stripLocalTrackToken_;
+  edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelLocalTrack>> stripLocalTrackToken_;
 
   edm::InputTag diamondLocalTrackInputTag_; // Input tag identifying the diamond detector
-  edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelCluster>> diamondLocalTrackToken_;
+  edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelLocalTrack>> diamondLocalTrackToken_;
 
   unsigned int detectorBitset_;
 
