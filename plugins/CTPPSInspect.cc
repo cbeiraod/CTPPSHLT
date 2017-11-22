@@ -34,6 +34,7 @@
 #include "FWCore/Utilities/interface/InputTag.h"
 
 #include "DataFormats/CTPPSReco/interface/CTPPSPixelCluster.h"
+#include "DataFormats/CTPPSReco/interface/CTPPSPixelLocalTrack.h"
 //#include "DataFormats/CTPPSReco/interface/CTPPSPixelRecHit.h"
 #include "DataFormats/DetId/interface/DetId.h"
 #include "DataFormats/Common/interface/DetSetVector.h"
@@ -123,7 +124,7 @@ CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    edm::Handle<edm::DetSetVector<CTPPSPixelCluster> > rpCl;
    iEvent.getByToken(tokenCTPPSPixelCluster_, rpCl);
 
-   edm::Handle<edmDetSetVector<CTPPSPixelLocalTrack>> rpTrack;
+   edm::Handle<edm::DetSetVector<CTPPSPixelLocalTrack>> rpTrack;
    iEvent.getByToken(pixelLocalTrackToken_, rpTrack);
 
    std::cout << "There are " << rpCl->size() << " clusters; and " << rpTrack->size() << " tracks." << std::endl;
