@@ -68,6 +68,9 @@ class CTPPSInspect : public edm::one::EDAnalyzer<>  {
       edm::InputTag srcCTPPSPixelCluster_;
       edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelCluster>> tokenCTPPSPixelCluster_;
       //RPixClusterToHit cluster2hit_;
+
+      edm::InputTag pixelTrackTag_;
+      edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelLocalTrack>> pixelLocalTrackToken_;
 };
 
 //
@@ -90,8 +93,10 @@ param_(iConfig)
   verbosity_ = iConfig.getUntrackedParameter<int> ("Verbosity");
 
   srcCTPPSPixelCluster_ = iConfig.getParameter<edm::InputTag>("RPixClusterTag");
+  pixelTrackTag_ = iConfig.getParameter<edm::InputTag>("pixelTrackTag");
 
   tokenCTPPSPixelCluster_ = consumes<edm::DetSetVector<CTPPSPixelCluster> >(srcCTPPSPixelCluster_);
+  pixelLocalTrackToken_ = consumes<edm::DetSetVector<CTPPSPixelLocalTrack>>(pixelTrackTag_);
 
 }
 
@@ -118,14 +123,25 @@ CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    edm::Handle<edm::DetSetVector<CTPPSPixelCluster> > rpCl;
    iEvent.getByToken(tokenCTPPSPixelCluster_, rpCl);
 
-   std::cout << "There are " << rpCl->size() << " clusters." << std::endl;
+   edm::Handle<edmDetSetVector<CTPPSPixelLocalTrack>> rpTrack;
+   iEvent.getByToken(pixelLocalTrackToken_, rpTrack);
 
+   std::cout << "There are " << rpCl->size() << " clusters; and " << rpTrack->size() << " tracks." << std::endl;
+
+   std::cout << "Clusters:" << std::endl;
    for (const auto &ds_cluster : (*rpCl))
    {
     //auto& id = ds_cluster.id;
     //std::cout << id << ": arm-" << id.arm() << "; station-" << id.station() << "; rp-" << id.rp() << std::endl;
     CTPPSPixelDetId id(ds_cluster.id);
-    std::cout << id << std::endl;
+    std::cout << "  " << id << std::endl;
+   }
+
+   std::cout << "Tracks:" << std::endl;
+   for(const auto &track : (*rpTrack))
+   {
+     CTPPSPixelDetId id(track.id);
+     std::cout << "  " << id << std::endl;
    }
 
 
@@ -162,6 +178,7 @@ CTPPSInspect::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   edm::ParameterSetDescription desc;
   desc.addUntracked<int>("Verbosity",0);
   desc.add<edm::InputTag>("RPixClusterTag",edm::InputTag("ctppsPixelClusters"));
+  desc.add<edm::InputTag>("pixelTrackTag", edm::InputTag("ctppsPixelLocalTracks"));
   descriptions.add("ctppsInspector", desc);
   //descriptions.addDefault(desc);
 }
