@@ -149,7 +149,7 @@ CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
      for(auto & track : rpv)
      {
-        std::cout << "    X: " << track.getX0() << "; Y: " << track.getY0() << "; isValid: " << (track.isValid?"yes":"no") << std::endl;
+        std::cout << "    X: " << track.getX0() << "; Y: " << track.getY0() << "; isValid: " << (track.isValid()?"yes":"no") << std::endl;
      }
    }
 
