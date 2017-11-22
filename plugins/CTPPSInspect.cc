@@ -127,7 +127,10 @@ CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    edm::Handle<edm::DetSetVector<CTPPSPixelLocalTrack>> rpTrack;
    iEvent.getByToken(pixelLocalTrackToken_, rpTrack);
 
-   std::cout << "There are " << rpCl->size() << " clusters; and " << rpTrack->size() << " tracks." << std::endl;
+   int nTracks = 0;
+   for(const auto &rpv : (*rpTrack))
+     nTracks += rpv.size();
+   std::cout << "There are " << rpCl->size() << " clusters; and " << nTracks << " tracks." << std::endl;
 
    std::cout << "Clusters:" << std::endl;
    for (const auto &ds_cluster : (*rpCl))
@@ -142,7 +145,12 @@ CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    for(const auto &track : (*rpTrack))
    {
      CTPPSPixelDetId id(track.id);
-     std::cout << "  " << id << std::endl;
+     std::cout << "  Pot " << id << ":" << std::endl;
+
+     for(auto & track : rpv)
+     {
+        std::cout << "    X: " << track.getX0() << "; Y: " << track.getY0() << "; isValid: " << (track.isValid?"yes":"no") << std::endl;
+     }
    }
 
 
