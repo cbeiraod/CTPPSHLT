@@ -101,6 +101,10 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
     filterproduct.addCollectionTag(diamondLocalTrackInputTag_);
   }
 
+  typedef Ref<edm::DetSetVector<CTPPSPixelLocalTrack>> PixelRef;
+  typedef Ref<edm::DetSetVector<CTPPSPixelLocalTrack>> StripRef;
+  typedef Ref<edm::DetSetVector<CTPPSPixelLocalTrack>> DiamondRef;
+
   //   Note that there is no matching between the tracks of the several detectors
   // so tracks from separate detectors might correspond to the same particle.
   // When/If the pixels are used in more than one RP, then the same situation can
@@ -116,6 +120,7 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
 
       if(id.arm() == 0) ++arm0Tracks;
       if(id.arm() == 1) ++arm1Tracks;
+      filterproduct.addObject(trigger::TriggerTrack, track);
     }
   }
 
