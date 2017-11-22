@@ -91,8 +91,8 @@ HLTCTPPSLocalTrackFilter::HLTCTPPSLocalTrackFilter(const edm::ParameterSet& iCon
 // Filter events, for triggering
 bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSetup& iSetup, trigger::TriggerFilterObjectWithRefs& filterproduct) const
 {
-  unsigned int arm0Tracks = 0;
-  unsigned int arm1Tracks = 0;
+  int arm0Tracks = 0;
+  int arm1Tracks = 0;
 
   if (saveTags())
   {
