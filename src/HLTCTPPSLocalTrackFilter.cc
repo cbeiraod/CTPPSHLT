@@ -6,6 +6,7 @@
 
 #include "UserCode/CTPPSHLT/interface/HLTCTPPSLocalTrackFilter.h"
 
+#include "DataFormats/Common/interface/Ref.h"
 #include "DataFormats/Common/interface/Handle.h"
 
 #include "HLTrigger/HLTcore/interface/defaultModuleLabel.h"
