@@ -122,8 +122,14 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
     {
       CTPPSPixelDetId id(rpv.id);
 
-      if(id.arm() == 0) arm45Tracks += rpv.size();
-      if(id.arm() == 1) arm56Tracks += rpv.size();
+      for(auto & track : rpv)
+      {
+        if(track.isValid())
+        {
+          if(id.arm() == 0) ++arm45Tracks;
+          if(id.arm() == 1) ++arm56Tracks;
+        }
+      }
       // Still not able to get the line below to work, but it seems no one keeps DetSets, so it should be fine as is
       //filterproduct.addObject(trigger::TriggerTrack, PixelRef(pixelTracks, rpv.id));
     }
@@ -131,15 +137,21 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
 
   if(useStrip_)
   {
-    edm::Hanlde<edm::DetSetVector<TotemRPLocalTrack>> stripTracks;
+    edm::Handle<edm::DetSetVector<TotemRPLocalTrack>> stripTracks;
     iEvent.getByToken(stripLocalTrackToken_, stripTracks);
 
     for(const auto &rpv : (*stripTracks))
     {
       TotemRPDetId id(rpv.id);
 
-      if(id.arm() == 0) arm45Tracks += rpv.size();
-      if(id.arm() == 1) arm56Tracks += rpv.size();
+      for(auto & track : rpv)
+      {
+        if(track.isValid())
+        {
+          if(id.arm() == 0) ++arm45Tracks;
+          if(id.arm() == 1) ++arm56Tracks;
+        }
+      }
       // Still not able to get the line below to work, but it seems no one keeps DetSets, so it should be fine as is
       //filterproduct.addObject(trigger::TriggerTrack, StripRef(stripTracks, rpv.id));
     }
@@ -147,15 +159,21 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
 
   if(useDiamond_)
   {
-    edm::Hanlde<edm::DetSetVector<CTPPSDiamondLocalTrack>> diamondTracks;
+    edm::Handle<edm::DetSetVector<CTPPSDiamondLocalTrack>> diamondTracks;
     iEvent.getByToken(diamondLocalTrackToken_, diamondTracks);
 
     for(const auto &rpv : (*diamondTracks))
     {
       CTPPSDiamondDetId id(rpv.id);
 
-      if(id.arm() == 0) arm45Tracks += rpv.size();
-      if(id.arm() == 1) arm56Tracks += rpv.size();
+      for(auto & track : rpv)
+      {
+        if(track.isValid())
+        {
+          if(id.arm() == 0) ++arm45Tracks;
+          if(id.arm() == 1) ++arm56Tracks;
+        }
+      }
       // Still not able to get the line below to work, but it seems no one keeps DetSets, so it should be fine as is
       //filterproduct.addObject(trigger::TriggerTrack, StripRef(diamondTracks, rpv.id));
     }
