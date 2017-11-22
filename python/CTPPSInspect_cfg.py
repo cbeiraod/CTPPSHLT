@@ -23,8 +23,10 @@ process.load("EventFilter.CTPPSRawToDigi.ctppsRawToDigi_cff")
 # RP reconstruction chain with standard settings
 process.load("RecoCTPPS.Configuration.recoCTPPS_cff")
 
-process.ctppsInspect = cms.EDAnalyzer('CTPPSInspect'
-)
+process.load("UserCode.CTPPSHLT.ctppsInspect_cfi")
+
+#process.ctppsInspect = cms.EDAnalyzer('CTPPSInspect'
+#)
 
 
 process.p = cms.Path(process.ctppsRawToDigi * process.recoCTPPS * process.ctppsInspect)
