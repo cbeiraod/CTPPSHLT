@@ -17,7 +17,10 @@
 
 #include "DataFormats/Common/interface/DetSet.h"
 #include "DataFormats/Common/interface/DetSetVector.h"
+
 #include "DataFormats/CTPPSDetId/interface/CTPPSPixelDetId.h"
+#include "DataFormats/CTPPSDetId/interface/TotemRPDetId.h"
+#include "DataFormats/CTPPSDetId/interface/CTPPSDiamondDetId.h"
 
 
 // Fill descriptions, for CMSSW
@@ -28,9 +31,9 @@ void HLTCTPPSLocalTrackFilter::fillDescriptions(edm::ConfigurationDescriptions& 
 
   desc.add<edm::InputTag>("pixelLocalTrackInputTag",   edm::InputTag("ctppsPixelLocalTracks"))
     ->setComment("input tag of the pixel local track collection");
-  desc.add<edm::InputTag>("stripLocalTrackInputTag",   edm::InputTag("ctppsPixelLocalTracks")) // TODO: Fix the tag
+  desc.add<edm::InputTag>("stripLocalTrackInputTag",   edm::InputTag("totemRPLocalTrackFitter"))
     ->setComment("input tag of the strip local track collection");
-  desc.add<edm::InputTag>("diamondLocalTrackInputTag", edm::InputTag("ctppsPixelLocalTracks")) // TODO: Fix the tag
+  desc.add<edm::InputTag>("diamondLocalTrackInputTag", edm::InputTag("ctppsDiamondLocalTracks"))
     ->setComment("input tag of the diamond local track collection");
 
   desc.add<unsigned int>("detectorBitset", static_cast<unsigned int>(1)) // TODO: Consider changing to 5 once the diamonds are implemented
@@ -75,9 +78,9 @@ HLTCTPPSLocalTrackFilter::HLTCTPPSLocalTrackFilter(const edm::ParameterSet& iCon
   if(usePixel_)
     pixelLocalTrackToken_   = consumes<edm::DetSetVector<CTPPSPixelLocalTrack>>(pixelLocalTrackInputTag_);
   if(useStrip_)
-    stripLocalTrackToken_   = consumes<edm::DetSetVector<CTPPSPixelLocalTrack>>(stripLocalTrackInputTag_);
+    stripLocalTrackToken_   = consumes<edm::DetSetVector<TotemRPLocalTrack>>(stripLocalTrackInputTag_);
   if(useDiamond_)
-    diamondLocalTrackToken_ = consumes<edm::DetSetVector<CTPPSPixelLocalTrack>>(diamondLocalTrackInputTag_);
+    diamondLocalTrackToken_ = consumes<edm::DetSetVector<CTPPSDiamondLocalTrack>>(diamondLocalTrackInputTag_);
 
   LogDebug("") << "HLTCTPPSLocalTrackFilter: pixelTag/stripTag/diamondTag/bitset/minTracks/minTracksPerArm/triggerType : "
                << pixelLocalTrackInputTag_.encode() << " "
@@ -92,8 +95,8 @@ HLTCTPPSLocalTrackFilter::HLTCTPPSLocalTrackFilter(const edm::ParameterSet& iCon
 // Filter events, for triggering
 bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSetup& iSetup, trigger::TriggerFilterObjectWithRefs& filterproduct) const
 {
-  int arm0Tracks = 0;
-  int arm1Tracks = 0;
+  int arm45Tracks = 0;
+  int arm56Tracks = 0;
 
   if (saveTags())
   {
@@ -103,8 +106,8 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
   }
 
   typedef edm::Ref<edm::DetSetVector<CTPPSPixelLocalTrack>> PixelRef;
-  typedef edm::Ref<edm::DetSetVector<CTPPSPixelLocalTrack>> StripRef;
-  typedef edm::Ref<edm::DetSetVector<CTPPSPixelLocalTrack>> DiamondRef;
+  typedef edm::Ref<edm::DetSetVector<TotemRPLocalTrack>> StripRef;
+  typedef edm::Ref<edm::DetSetVector<CTPPSDiamondLocalTrack>> DiamondRef;
 
   //   Note that there is no matching between the tracks of the several detectors
   // so tracks from separate detectors might correspond to the same particle.
@@ -115,26 +118,53 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
     edm::Handle<edm::DetSetVector<CTPPSPixelLocalTrack>> pixelTracks;
     iEvent.getByToken(pixelLocalTrackToken_, pixelTracks);
 
-    for(const auto &track : (*pixelTracks))
+    for(const auto &rpv : (*pixelTracks))
     {
-      CTPPSPixelDetId id(track.id);
+      CTPPSPixelDetId id(rpv.id);
 
-      if(id.arm() == 0) ++arm0Tracks;
-      if(id.arm() == 1) ++arm1Tracks;
-      filterproduct.addObject(trigger::TriggerTrack, track);
+      if(id.arm() == 0) arm45Tracks += rpv.size();
+      if(id.arm() == 1) arm56Tracks += rpv.size();
+      // Still not able to get the line below to work, but it seems no one keeps DetSets, so it should be fine as is
+      //filterproduct.addObject(trigger::TriggerTrack, PixelRef(pixelTracks, rpv.id));
     }
   }
 
   if(useStrip_)
-  {}
+  {
+    edm::Hanlde<edm::DetSetVector<TotemRPLocalTrack>> stripTracks;
+    iEvent.getByToken(stripLocalTrackToken_, stripTracks);
+
+    for(const auto &rpv : (*stripTracks))
+    {
+      TotemRPDetId id(rpv.id);
+
+      if(id.arm() == 0) arm45Tracks += rpv.size();
+      if(id.arm() == 1) arm56Tracks += rpv.size();
+      // Still not able to get the line below to work, but it seems no one keeps DetSets, so it should be fine as is
+      //filterproduct.addObject(trigger::TriggerTrack, StripRef(stripTracks, rpv.id));
+    }
+  }
 
   if(useDiamond_)
-  {}
+  {
+    edm::Hanlde<edm::DetSetVector<CTPPSDiamondLocalTrack>> diamondTracks;
+    iEvent.getByToken(diamondLocalTrackToken_, diamondTracks);
+
+    for(const auto &rpv : (*diamondTracks))
+    {
+      CTPPSDiamondDetId id(rpv.id);
+
+      if(id.arm() == 0) arm45Tracks += rpv.size();
+      if(id.arm() == 1) arm56Tracks += rpv.size();
+      // Still not able to get the line below to work, but it seems no one keeps DetSets, so it should be fine as is
+      //filterproduct.addObject(trigger::TriggerTrack, StripRef(diamondTracks, rpv.id));
+    }
+  }
 
 
   bool accept = true;
 
-  if(arm0Tracks + arm1Tracks < minTracks_ || arm0Tracks < minTracksPerArm_ || arm1Tracks < minTracksPerArm_)
+  if(arm45Tracks + arm56Tracks < minTracks_ || arm45Tracks < minTracksPerArm_ || arm56Tracks < minTracksPerArm_)
     accept = false;
 
   return accept;

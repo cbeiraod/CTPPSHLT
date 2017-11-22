@@ -15,7 +15,9 @@
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 
-#include "DataFormats/CTPPSReco/interface/CTPPSPixelLocalTrack.h"
+#include "DataFormats/CTPPSReco/interface/CTPPSPixelLocalTrack.h"     // pixel
+#include "DataFormats/CTPPSReco/interface/TotemRPLocalTrack.h"        // strip
+#include "DataFormats/CTPPSReco/interface/CTPPSDiamondLocalTrack.h"   // diamond
 
 class HLTCTPPSLocalTrackFilter : public HLTFilter
 {
@@ -33,10 +35,10 @@ private:
   edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelLocalTrack>> pixelLocalTrackToken_;
 
   edm::InputTag stripLocalTrackInputTag_; // Input tag identifying the strip detector
-  edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelLocalTrack>> stripLocalTrackToken_;
+  edm::EDGetTokenT<edm::DetSetVector<TotemRPLocalTrack>> stripLocalTrackToken_;
 
   edm::InputTag diamondLocalTrackInputTag_; // Input tag identifying the diamond detector
-  edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelLocalTrack>> diamondLocalTrackToken_;
+  edm::EDGetTokenT<edm::DetSetVector<CTPPSDiamondLocalTrack>> diamondLocalTrackToken_;
 
   unsigned int detectorBitset_;
 
