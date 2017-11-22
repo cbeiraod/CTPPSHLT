@@ -188,7 +188,7 @@ CTPPSInspect::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   desc.addUntracked<int>("Verbosity",0);
   desc.add<edm::InputTag>("RPixClusterTag",edm::InputTag("ctppsPixelClusters"));
   desc.add<edm::InputTag>("pixelTrackTag", edm::InputTag("ctppsPixelLocalTracks"));
-  descriptions.add("ctppsInspector", desc);
+  descriptions.add("ctppsInspect", desc);
   //descriptions.addDefault(desc);
 }
 
