@@ -50,6 +50,6 @@ private:
   bool useDiamond_;
 
 protected:
-}
+};
 
 #endif
