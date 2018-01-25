@@ -19,39 +19,4 @@
 #include "DataFormats/CTPPSReco/interface/TotemRPLocalTrack.h"        // strip
 #include "DataFormats/CTPPSReco/interface/CTPPSDiamondLocalTrack.h"   // diamond
 
-class HLTCTPPSLocalTrackFilter : public HLTFilter
-{
-public:
-  explicit HLTCTPPSLocalTrackFilter(const edm::ParameterSet&);
-  ~HLTCTPPSLocalTrackFilter() override;
-
-  static void fillDescriptions(edm::ConfigurationDescriptions&);
-  bool hltFilter(edm::Event&, const edm::EventSetup&, trigger::TriggerFilterObjectWithRefs&) const override;
-
-private:
-  edm::ParameterSet param_;
-
-  edm::InputTag pixelLocalTrackInputTag_; // Input tag identifying the pixel detector
-  edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelLocalTrack>> pixelLocalTrackToken_;
-
-  edm::InputTag stripLocalTrackInputTag_; // Input tag identifying the strip detector
-  edm::EDGetTokenT<edm::DetSetVector<TotemRPLocalTrack>> stripLocalTrackToken_;
-
-  edm::InputTag diamondLocalTrackInputTag_; // Input tag identifying the diamond detector
-  edm::EDGetTokenT<edm::DetSetVector<CTPPSDiamondLocalTrack>> diamondLocalTrackToken_;
-
-  unsigned int detectorBitset_;
-
-  int minTracks_;
-  int minTracksPerArm_;
-
-  int triggerType_;
-
-  bool usePixel_;
-  bool useStrip_;
-  bool useDiamond_;
-
-protected:
-};
-
 #endif
