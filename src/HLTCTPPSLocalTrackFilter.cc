@@ -46,7 +46,7 @@ void HLTCTPPSLocalTrackFilter::fillDescriptions(edm::ConfigurationDescriptions& 
 
   desc.add<int>("triggerType", trigger::TriggerTrack);
 
-  descriptions.add(defaultModuleLabel<HLTCTPPSLocalTrackFilter>(), desc);
+  descriptions.add("hltCTPPSLocalTrackFilter", desc);
   return;
 }
 
