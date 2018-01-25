@@ -224,4 +224,5 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
 }
 
 //define this as a plug-in
+#include "FWCore/Framework/interface/MakerMacros.h"
 DEFINE_FWK_MODULE(HLTCTPPSLocalTrackFilter);
