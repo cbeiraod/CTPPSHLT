@@ -32,6 +32,9 @@ private:
   int minTracks_;
   int minTracksPerArm_;
 
+  int maxTracks_;
+  int maxTracksPerArm_;
+
   int triggerType_;
 
   bool usePixel_;
@@ -79,6 +82,11 @@ void HLTCTPPSLocalTrackFilter::fillDescriptions(edm::ConfigurationDescriptions& 
   desc.add<int>("minTracksPerArm", 1)
     ->setComment("minimum number of tracks per arm of the CTPPS detector");
 
+  desc.add<int>("maxTracks", -1)
+    ->setComment("maximum number of tracks, if smaller than minTracks it will be ignored");
+  desc.add<int>("maxTracksPerArm", -1)
+    ->setComment("maximum number of tracks per arm of the CTPPS detector, if smaller than minTrackPerArm it will be ignored");
+
   desc.add<int>("triggerType", trigger::TriggerTrack);
 
   descriptions.add("hltCTPPSLocalTrackFilter", desc);
@@ -98,6 +106,8 @@ HLTCTPPSLocalTrackFilter::HLTCTPPSLocalTrackFilter(const edm::ParameterSet& iCon
   detectorBitset_            (iConfig.getParameter< unsigned int  > ("detectorBitset")),
   minTracks_                 (iConfig.getParameter< int           > ("minTracks")),
   minTracksPerArm_           (iConfig.getParameter< int           > ("minTracksPerArm")),
+  maxTracks_                 (iConfig.getParameter< int           > ("maxTracks")),
+  maxTracksPerArm_           (iConfig.getParameter< int           > ("maxTracksPerArm")),
   triggerType_               (iConfig.getParameter< int           > ("triggerType")),
   usePixel_   (false),
   useStrip_   (false),
@@ -124,6 +134,8 @@ HLTCTPPSLocalTrackFilter::HLTCTPPSLocalTrackFilter(const edm::ParameterSet& iCon
                << detectorBitset_ << " "
                << minTracks_ << " "
                << minTracksPerArm_ << " "
+               << maxTracks_ << " "
+               << maxTracksPerArm_ << " "
                << triggerType_;
 }
 
@@ -218,6 +230,12 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
   bool accept = true;
 
   if(arm45Tracks + arm56Tracks < minTracks_ || arm45Tracks < minTracksPerArm_ || arm56Tracks < minTracksPerArm_)
+    accept = false;
+
+  if(maxTracks_ >= minTracks_ && arm45Tracks + arm56Tracks > maxTracks_)
+    accept = false;
+
+  if(maxTracksPerArm_ >= minTracksPerArm_ && (arm45Tracks > maxTracksPerArm_ || arm56Tracks > maxTracksPerArm_))
     accept = false;
 
   return accept;
