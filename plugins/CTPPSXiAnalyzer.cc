@@ -301,9 +301,9 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
     ProtonRapidity_       = fs->make<TH1D>(buildName("h_protonRapidity", suffix_).c_str(),"Proton Rapidity;y_{proton};Events", binsRapidity_, minRapidity_, maxRapidity_);
     ProtonMassVsRapidity_ = fs->make<TH2D>(buildName("h_proton_massVSrapidity", suffix_).c_str(),"Proton Mass vs Rapidity;M_{proton};y_{proton}", binsMass_, minMass_, maxMass_, binsRapidity_, minRapidity_, maxRapidity_);
 
-    ProtonMassExclusive_           = fs->make<TH1D>(buildName("h_protonMass_exclusive", suffix_).c_str(),"Proton Mass;M_{proton};Events", binsMass_, minMass_, maxMass_);
-    ProtonRapidityExclusive_       = fs->make<TH1D>(buildName("h_protonRapidity_exclusive", suffix_).c_str(),"Proton Rapidity;y_{proton};Events", binsRapidity_, minRapidity_, maxRapidity_);
-    ProtonMassVsRapidityExclusive_ = fs->make<TH2D>(buildName("h_proton_massVSrapidity_exclusive", suffix_).c_str(),"Proton Mass vs Rapidity;M_{proton};y_{proton}", binsMass_, minMass_, maxMass_, binsRapidity_, minRapidity_, maxRapidity_);
+    ProtonMassExclusiveDijet_           = fs->make<TH1D>(buildName("h_protonMass_exclusive", suffix_).c_str(),"Proton Mass;M_{proton};Events", binsMass_, minMass_, maxMass_);
+    ProtonRapidityExclusiveDijet_       = fs->make<TH1D>(buildName("h_protonRapidity_exclusive", suffix_).c_str(),"Proton Rapidity;y_{proton};Events", binsRapidity_, minRapidity_, maxRapidity_);
+    ProtonMassVsRapidityExclusiveDijet_ = fs->make<TH2D>(buildName("h_proton_massVSrapidity_exclusive", suffix_).c_str(),"Proton Mass vs Rapidity;M_{proton};y_{proton}", binsMass_, minMass_, maxMass_, binsRapidity_, minRapidity_, maxRapidity_);
   }
 
   if(xiFromDijet_)
@@ -358,8 +358,8 @@ CTPPSXiAnalyzer::~CTPPSXiAnalyzer()= default;
 
 struct protonReco
 {
-  int arm1Idx;
-  int arm2Idx;
+  size_t arm1Idx;
+  size_t arm2Idx;
   double xi1;
   double xi2;
   double mass;
@@ -474,10 +474,10 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
     }
   }
 
-  for(int i = 0; i < arm1Xis.size(); ++i)
+  for(size_t i = 0; i < arm1Xis.size(); ++i)
   {
     double xi1 = arm1Xis[i];
-    for(int j = 0; j < arm2Xis.size(); ++j)
+    for(size_t j = 0; j < arm2Xis.size(); ++j)
     {
       double xi2 = arm2Xis[j];
 
@@ -589,7 +589,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
 
       int index = -1;
       double minDistance = 0;
-      for(int i = 0; i < protonMasses.size(); ++i)
+      for(size_t i = 0; i < protonMasses.size(); ++i)
       {
         double protonMass = protonMasses[i].mass;
         double protonRapidity = protonMasses[i].rapidity;
