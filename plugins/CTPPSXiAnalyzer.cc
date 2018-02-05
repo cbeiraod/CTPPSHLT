@@ -40,6 +40,10 @@
 #include "DataFormats/CTPPSReco/interface/TotemRPLocalTrack.h"        // strip
 #include "DataFormats/CTPPSReco/interface/CTPPSDiamondLocalTrack.h"   // diamond
 
+#include "TLorentzVector.h"
+#include "TH2D.h"
+#include "TH1D.h"
+
 #include <sstream>
 #include <vector>
 #include <utility> // for std::pair
@@ -59,9 +63,9 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
 
 
    private:
-      virtual void beginJob() override;
+      //virtual void beginJob() override;
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
-      virtual void endJob() override;
+      //virtual void endJob() override;
 
       // ----------member data ---------------------------
 
@@ -281,13 +285,13 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
     if(suffix == "")
       return base;
     else
-      return base + "_" + sufix;
+      return base + "_" + suffix;
   };
 
   if(detectorBitset_ != 0)
   {
-    Arm1Xi_ = fs->make<TH1D>(buildName("h_arm1xi", suffix_),"Arm1 Xi;#xi_{proton};Events", binsXi_, minXi_, maxXi_);
-    Arm2Xi_ = fs->make<TH1D>(buildName("h_arm2xi", suffix_),"Arm2 Xi;#xi_{proton};Events", binsXi_, minXi_, maxXi_);
+    Arm1Xi_ = fs->make<TH1D>(buildName("h_arm1xi", suffix_).c_str(),"Arm1 Xi;#xi_{proton};Events", binsXi_, minXi_, maxXi_);
+    Arm2Xi_ = fs->make<TH1D>(buildName("h_arm2xi", suffix_).c_str(),"Arm2 Xi;#xi_{proton};Events", binsXi_, minXi_, maxXi_);
 
     ProtonMass_           = fs->make<TH1D>(buildName("h_protonMass", suffix_).c_str(),"Proton Mass;M_{proton};Events", binsMass_, minMass_, maxMass_);
     ProtonRapidity_       = fs->make<TH1D>(buildName("h_protonRapidity", suffix_).c_str(),"Proton Rapidity;y_{proton};Events", binsRapidity_, minRapidity_, maxRapidity_);
@@ -300,11 +304,11 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
 
   if(xiFromDijet_)
   {
-    Arm1DijetXi_ = fs->make<TH1D>(buildName("h_arm1dijetxi", suffix_),"Arm1 Dijet Xi;#xi_{dijet};Events", binsXi_, minXi_, maxXi_);
-    Arm2DijetXi_ = fs->make<TH1D>(buildName("h_arm2dijetxi", suffix_),"Arm2 Dijet Xi;#xi_{dijet};Events", binsXi_, minXi_, maxXi_);
+    Arm1DijetXi_ = fs->make<TH1D>(buildName("h_arm1dijetxi", suffix_).c_str(),"Arm1 Dijet Xi;#xi_{dijet};Events", binsXi_, minXi_, maxXi_);
+    Arm2DijetXi_ = fs->make<TH1D>(buildName("h_arm2dijetxi", suffix_).c_str(),"Arm2 Dijet Xi;#xi_{dijet};Events", binsXi_, minXi_, maxXi_);
 
-    Arm1VsDijetXi_ = fs->make<TH2D>(buildName("h_arm1vsdijetxi", suffix_), "Arm1 Xi Vs Dijet Xi;#xi_{proton};#xi_{dijet}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
-    Arm2VsDijetXi_ = fs->make<TH2D>(buildName("h_arm2vsdijetxi", suffix_), "Arm2 Xi Vs Dijet Xi;#xi_{proton};#xi_{dijet}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
+    Arm1VsDijetXi_ = fs->make<TH2D>(buildName("h_arm1vsdijetxi", suffix_).c_str(), "Arm1 Xi Vs Dijet Xi;#xi_{proton};#xi_{dijet}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
+    Arm2VsDijetXi_ = fs->make<TH2D>(buildName("h_arm2vsdijetxi", suffix_).c_str(), "Arm2 Xi Vs Dijet Xi;#xi_{proton};#xi_{dijet}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
 
     DijetMass_           = fs->make<TH1D>(buildName("h_dijetMass", suffix_).c_str(), "Dijet Mass;M_{dijet};Events", binsMass_, minMass_, maxMass_);
     DijetRapidity_       = fs->make<TH1D>(buildName("h_dijetRapidity", suffix_).c_str(), "Dijet Rapidity;y_{dijet};Events", binsRapidity_, minRapidity_, maxRapidity_);
@@ -313,11 +317,11 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
 
   if(xiFromDilepton_)
   {
-    Arm1DileptonXi_ = fs->make<TH1D>(buildName("h_arm1dileptonxi", suffix_),"Arm1 Dilepton Xi;#xi_{dilepton};Events", binsXi_, minXi_, maxXi_);
-    Arm2DileptonXi_ = fs->make<TH1D>(buildName("h_arm2dileptonxi", suffix_),"Arm2 Dilepton Xi;#xi_{dilepton};Events", binsXi_, minXi_, maxXi_);
+    Arm1DileptonXi_ = fs->make<TH1D>(buildName("h_arm1dileptonxi", suffix_).c_str(),"Arm1 Dilepton Xi;#xi_{dilepton};Events", binsXi_, minXi_, maxXi_);
+    Arm2DileptonXi_ = fs->make<TH1D>(buildName("h_arm2dileptonxi", suffix_).c_str(),"Arm2 Dilepton Xi;#xi_{dilepton};Events", binsXi_, minXi_, maxXi_);
 
-    Arm1VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm1vsdileptonxi", suffix_), "Arm1 Xi Vs Dilepton Xi;#xi_{proton};#xi_{dilepton}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
-    Arm2VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm2vsdileptonxi", suffix_), "Arm2 Xi Vs Dilepton Xi;#xi_{proton};#xi_{dilepton}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
+    Arm1VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm1vsdileptonxi", suffix_).c_str(), "Arm1 Xi Vs Dilepton Xi;#xi_{proton};#xi_{dilepton}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
+    Arm2VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm2vsdileptonxi", suffix_).c_str(), "Arm2 Xi Vs Dilepton Xi;#xi_{proton};#xi_{dilepton}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
 
     DileptonMass_           = fs->make<TH1D>(buildName("h_dileptonMass", suffix_).c_str(), "Dijet Mass;M_{dilepton};Events", binsMass_, minMass_, maxMass_);
     DileptonRapidity_       = fs->make<TH1D>(buildName("h_dileptonRapidity", suffix_).c_str(), "Dijet Rapidity;y_{dilepton};Events", binsRapidity_, minRapidity_, maxRapidity_);
@@ -461,11 +465,10 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
     {
       edm::Handle< std::vector<pat::Jet> > jets;
       iEvent.getByToken(pat_jet_token, jets);
-
-      if(jets.size() >= 2)
+      if(jets->size() >= 2)
       {
-        pat::Jet& jet1 = jets[0];
-        pat::Jet& jet2 = jets[1];
+        pat::Jet jet1 = (*jets)[0];
+        pat::Jet jet2 = (*jets)[1];
 
         TLorentzVector jet1_vec(jet1.px(), jet1.py(), jet1.pz(), jet1.pt());
         TLorentzVector jet2_vec(jet2.px(), jet2.py(), jet2.pz(), jet2.pt());
@@ -491,10 +494,10 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
       edm::Handle< std::vector<reco::PFJet> > jets;
       iEvent.getByToken(jet_token, jets);
 
-      if(jets.size() >= 2)
+      if(jets->size() >= 2)
       {
-        reco::Jet& jet1 = jets[0];
-        reco::Jet& jet2 = jets[1];
+        reco::Jet jet1 = (*jets)[0];
+        reco::Jet jet2 = (*jets)[1];
 
         TLorentzVector jet1_vec(jet1.px(), jet1.py(), jet1.pz(), jet1.pt());
         TLorentzVector jet2_vec(jet2.px(), jet2.py(), jet2.pz(), jet2.pt());
