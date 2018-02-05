@@ -141,9 +141,13 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
       TH1D* ProtonRapidity_;
       TH2D* ProtonMassVsRapidity_;
 
-      TH1D* ProtonMassExclusive_;
-      TH1D* ProtonRapidityExclusive_;
-      TH2D* ProtonMassVsRapidityExclusive_;
+      TH1D* ProtonMassExclusiveDijet_;
+      TH1D* ProtonRapidityExclusiveDijet_;
+      TH2D* ProtonMassVsRapidityExclusiveDijet_;
+
+      TH1D* ProtonMassExclusiveDilepton_;
+      TH1D* ProtonRapidityExclusiveDilepton_;
+      TH2D* ProtonMassVsRapidityExclusiveDilepton_;
 
       TH1D* DijetMass_;
       TH1D* DijetRapidity_;
@@ -352,10 +356,21 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
 
 CTPPSXiAnalyzer::~CTPPSXiAnalyzer()= default;
 
+struct protonReco
+{
+  int arm1Idx;
+  int arm2Idx;
+  double xi1;
+  double xi2;
+  double mass;
+  double rapidity;
+};
+
 void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   std::vector<double> arm1Xis;
   std::vector<double> arm2Xis;
+  std::vector<protonReco> protonMasses;
   double arm1DijetXi = -1;
   double arm2DijetXi = -1;
   double jetMass = -1;
@@ -459,6 +474,29 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
     }
   }
 
+  for(int i = 0; i < arm1Xis.size(); ++i)
+  {
+    double xi1 = arm1Xis[i];
+    for(int j = 0; j < arm2Xis.size(); ++j)
+    {
+      double xi2 = arm2Xis[j];
+
+      protonReco tmp;
+      tmp.arm1Idx = i;
+      tmp.arm2Idx = j;
+      tmp.xi1 = xi1;
+      tmp.xi2 = xi2;
+      tmp.mass = std::sqrt(xi1*xi2)*13000.0;
+      tmp.rapidity = std::log(xi1/xi2)/2.0;
+
+      ProtonMass_->Fill(tmp.mass);
+      ProtonRapidity_->Fill(tmp.rapidity);
+      ProtonMassVsRapidity_->Fill(tmp.mass, tmp.rapidity);
+
+      protonMasses.push_back(std::move(tmp));
+    }
+  }
+
   if(xiFromDijet_)
   {
     if(usePATObjects_)
@@ -541,6 +579,46 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
       }
       if(closestXi > 0)
         Arm2VsDijetXi_->Fill(closestXi, arm2DijetXi);
+    }
+
+    if(jetMass > 0)
+    {
+      DijetMass_->Fill(jetMass);
+      DijetRapidity_->Fill(jetRapidity);
+      DijetMassVsRapidity_->Fill(jetMass, jetRapidity);
+
+      int index = -1;
+      double minDistance = 0;
+      for(int i = 0; i < protonMasses.size(); ++i)
+      {
+        double protonMass = protonMasses[i].mass;
+        double protonRapidity = protonMasses[i].rapidity;
+
+        double massDifference = jetMass - protonMass;
+        double rapidityDifference = jetRapidity - protonRapidity;
+        double distance = std::sqrt(std::pow(massDifference, 2) - std::pow(rapidityDifference, 2));
+
+        if(index == -1)
+        {
+          minDistance = distance;
+          index = i;
+        }
+        else
+        {
+          if(distance < minDistance)
+          {
+            minDistance = distance;
+            index = i;
+          }
+        }
+      }
+
+      if(index > -1)
+      {
+        ProtonMassExclusiveDijet_->Fill(protonMasses[index].mass);
+        ProtonRapidityExclusiveDijet_->Fill(protonMasses[index].rapidity);
+        ProtonMassVsRapidityExclusiveDijet_->Fill(protonMasses[index].mass, protonMasses[index].rapidity);
+      }
     }
   }
 
