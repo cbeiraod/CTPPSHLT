@@ -41,6 +41,8 @@
 #include "DataFormats/CTPPSReco/interface/CTPPSDiamondLocalTrack.h"   // diamond
 
 #include "TLorentzVector.h"
+#include "TH2D.h"
+#include "TH1D.h"
 
 #include <sstream>
 #include <vector>
@@ -289,7 +291,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
         {
           double x_mm = track.getX0();
           // Here apply corrections to x
-          double xi = (x_mm*1)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
+          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
 
           if(id.arm() == 0)
           {
@@ -321,7 +323,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
         {
           double x_mm = track.getX0();
           // Here apply corrections to x
-          double xi = (x_mm*1)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
+          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
 
           if(id.arm() == 0)
           {
@@ -353,7 +355,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
         {
           double x_mm = track.getX0();
           // Here apply corrections to x
-          double xi = (x_mm*1)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
+          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
 
           if(id.arm() == 0)
           {
