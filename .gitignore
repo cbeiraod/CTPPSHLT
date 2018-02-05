@@ -1,0 +1,4 @@
+*.pyc
+out.root
+DQMIO.root
+python/__init__.py
