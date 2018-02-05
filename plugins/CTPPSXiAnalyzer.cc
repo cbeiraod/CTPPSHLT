@@ -243,31 +243,31 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
     if(suffix == "")
       return base;
     else
-      return base + "_" + sufix;
+      return base + "_" + suffix;
   };
 
   if(detectorBitset_ != 0)
   {
-    Arm1Xi_ = fs->make<TH1D>(buildName("h_arm1xi", suffix_),"Arm1 Xi;Xi;Events", bins_, min_, max_);
-    Arm2Xi_ = fs->make<TH1D>(buildName("h_arm2xi", suffix_),"Arm2 Xi;Xi;Events", bins_, min_, max_);
+    Arm1Xi_ = fs->make<TH1D>(buildName("h_arm1xi", suffix_).c_str(),"Arm1 Xi;Xi;Events", bins_, min_, max_);
+    Arm2Xi_ = fs->make<TH1D>(buildName("h_arm2xi", suffix_).c_str(),"Arm2 Xi;Xi;Events", bins_, min_, max_);
   }
 
   if(xiFromDijet_)
   {
-    Arm1DijetXi_ = fs->make<TH1D>(buildName("h_arm1dijetxi", suffix_),"Arm1 Dijet Xi;Xi;Events", bins_, min_, max_);
-    Arm2DijetXi_ = fs->make<TH1D>(buildName("h_arm2dijetxi", suffix_),"Arm2 Dijet Xi;Xi;Events", bins_, min_, max_);
+    Arm1DijetXi_ = fs->make<TH1D>(buildName("h_arm1dijetxi", suffix_).c_str(),"Arm1 Dijet Xi;Xi;Events", bins_, min_, max_);
+    Arm2DijetXi_ = fs->make<TH1D>(buildName("h_arm2dijetxi", suffix_).c_str(),"Arm2 Dijet Xi;Xi;Events", bins_, min_, max_);
 
-    Arm1VsDijetXi_ = fs->make<TH2D>(buildName("h_arm1vsdijetxi", suffix_), "Arm1 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}", bins_, min_, max_, bins_, min_, max_);
-    Arm2VsDijetXi_ = fs->make<TH2D>(buildName("h_arm2vsdijetxi", suffix_), "Arm2 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}", bins_, min_, max_, bins_, min_, max_);
+    Arm1VsDijetXi_ = fs->make<TH2D>(buildName("h_arm1vsdijetxi", suffix_).c_str(), "Arm1 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}", bins_, min_, max_, bins_, min_, max_);
+    Arm2VsDijetXi_ = fs->make<TH2D>(buildName("h_arm2vsdijetxi", suffix_).c_str(), "Arm2 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}", bins_, min_, max_, bins_, min_, max_);
   }
 
   if(xiFromDilepton_)
   {
-    Arm1DileptonXi_ = fs->make<TH1D>(buildName("h_arm1dileptonxi", suffix_),"Arm1 Dilepton Xi;Xi;Events", bins_, min_, max_);
-    Arm2DileptonXi_ = fs->make<TH1D>(buildName("h_arm2dileptonxi", suffix_),"Arm2 Dilepton Xi;Xi;Events", bins_, min_, max_);
+    Arm1DileptonXi_ = fs->make<TH1D>(buildName("h_arm1dileptonxi", suffix_).c_str(),"Arm1 Dilepton Xi;Xi;Events", bins_, min_, max_);
+    Arm2DileptonXi_ = fs->make<TH1D>(buildName("h_arm2dileptonxi", suffix_).c_str(),"Arm2 Dilepton Xi;Xi;Events", bins_, min_, max_);
 
-    Arm1VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm1vsdileptonxi", suffix_), "Arm1 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}", bins_, min_, max_, bins_, min_, max_);
-    Arm2VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm2vsdileptonxi", suffix_), "Arm2 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}", bins_, min_, max_, bins_, min_, max_);
+    Arm1VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm1vsdileptonxi", suffix_).c_str(), "Arm1 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}", bins_, min_, max_, bins_, min_, max_);
+    Arm2VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm2vsdileptonxi", suffix_).c_str(), "Arm2 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}", bins_, min_, max_, bins_, min_, max_);
   }
 
 
