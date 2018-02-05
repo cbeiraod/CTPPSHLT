@@ -29,6 +29,16 @@
 #include "DataFormats/CTPPSDetId/interface/TotemRPDetId.h"
 #include "DataFormats/CTPPSDetId/interface/CTPPSDiamondDetId.h"
 
+#include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
+#include "DataFormats/HLTReco/interface/TriggerFilterObjectWithRefs.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Utilities/interface/InputTag.h"
+#include "FWCore/Framework/interface/EventSetup.h"
+
+#include "DataFormats/CTPPSReco/interface/CTPPSPixelLocalTrack.h"     // pixel
+#include "DataFormats/CTPPSReco/interface/TotemRPLocalTrack.h"        // strip
+#include "DataFormats/CTPPSReco/interface/CTPPSDiamondLocalTrack.h"   // diamond
+
 #include <stringstream>
 #include <vector>
 #include <pair>
