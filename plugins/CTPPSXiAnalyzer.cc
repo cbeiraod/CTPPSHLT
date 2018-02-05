@@ -39,9 +39,9 @@
 #include "DataFormats/CTPPSReco/interface/TotemRPLocalTrack.h"        // strip
 #include "DataFormats/CTPPSReco/interface/CTPPSDiamondLocalTrack.h"   // diamond
 
-#include <stringstream>
+#include <sstream>
 #include <vector>
-#include <pair>
+#include <utility> // for std::pair
 
 
 
