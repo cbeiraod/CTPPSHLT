@@ -227,12 +227,18 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
   {
     Arm1DijetXi_ = fs->make<TH1D>("h_arm1dijetxi","Arm1 Dijet Xi;Xi;Events",100,0,1);
     Arm2DijetXi_ = fs->make<TH1D>("h_arm2dijetxi","Arm2 Dijet Xi;Xi;Events",100,0,1);
+
+    Arm1VsDijetXi_ = fs->make<TH2D>("h_arm1vsdijetxi", "Arm1 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}",100,0,1,100,0,1);
+    Arm2VsDijetXi_ = fs->make<TH2D>("h_arm2vsdijetxi", "Arm2 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}",100,0,1,100,0,1);
   }
 
   if(xiFromDilepton_)
   {
     Arm1DileptonXi_ = fs->make<TH1D>("h_arm1dileptonxi","Arm1 Dilepton Xi;Xi;Events",100,0,1);
     Arm2DileptonXi_ = fs->make<TH1D>("h_arm2dileptonxi","Arm2 Dilepton Xi;Xi;Events",100,0,1);
+
+    Arm1VsDileptonXi_ = fs->make<TH2D>("h_arm1vsdileptonxi", "Arm1 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}",100,0,1,100,0,1);
+    Arm2VsDileptonXi_ = fs->make<TH2D>("h_arm2vsdileptonxi", "Arm2 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}",100,0,1,100,0,1);
   }
 
 
@@ -263,10 +269,10 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
 {
   std::vector<double> arm1Xis;
   std::vector<double> arm2Xis;
-  std::vector<double> arm1DijetXis;
-  std::vector<double> arm2DijetXis;
-  //std::vector<double> arm1DileptonXis;
-  //std::vector<double> arm2DileptonXis;
+  double arm1DijetXi = -1;
+  double arm2DijetXi = -1;
+  //double arm1DileptonXi = -1;
+  //double arm2DileptonXi = -1;
 
   if(usePixel_)
   {
@@ -387,6 +393,9 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
 
         Arm1DijetXi_->Fill(xi1);
         Arm2DijetXi_->Fill(xi2);
+
+        arm1DijetXi = xi1;
+        arm2DijetXi = xi2;
       }
     }
     else
@@ -411,7 +420,34 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
 
         Arm1DijetXi_->Fill(xi1);
         Arm2DijetXi_->Fill(xi2);
+
+        arm1DijetXi = xi1;
+        arm2DijetXi = xi2;
       }
+    }
+
+    if(arm1DijetXi > 0)
+    {
+      double closestXi = -2;
+      for(auto& xi: arm1Xis)
+      {
+        if(std::abs(xi - arm1DijetXi) < std::abs(closestXi - arm1DijetXi))
+          closestXi = xi;
+      }
+      if(closestXi > 0)
+        Arm1VsDijetXi_->Fill(closestXi, arm1DijetXi);
+    }
+
+    if(arm2DijetXi > 0)
+    {
+      double closestXi = -2;
+      for(auto& xi: arm2Xis)
+      {
+        if(std::abs(xi - arm2DijetXi) < std::abs(closestXi - arm2DijetXi))
+          closestXi = xi;
+      }
+      if(closestXi > 0)
+        Arm2VsDijetXi_->Fill(closestXi, arm2DijetXi);
     }
   }
 
