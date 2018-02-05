@@ -40,6 +40,8 @@
 #include "DataFormats/CTPPSReco/interface/TotemRPLocalTrack.h"        // strip
 #include "DataFormats/CTPPSReco/interface/CTPPSDiamondLocalTrack.h"   // diamond
 
+#include "TLorentzVector.h"
+
 #include <sstream>
 #include <vector>
 #include <utility> // for std::pair
@@ -368,11 +370,10 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
     {
       edm::Handle< std::vector<pat::Jet> > jets;
       iEvent.getByToken(pat_jet_token, jets);
-
-      if(jets.size() >= 2)
+      if(jets->size() >= 2)
       {
-        pat::Jet& jet1 = jets[0];
-        pat::Jet& jet2 = jets[1];
+        pat::Jet jet1 = (*jets)[0];
+        pat::Jet jet2 = (*jets)[1];
 
         TLorentzVector jet1_vec(jet1.px(), jet1.py(), jet1.pz(), jet1.pt());
         TLorentzVector jet2_vec(jet2.px(), jet2.py(), jet2.pz(), jet2.pt());
@@ -393,10 +394,10 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
       edm::Handle< std::vector<reco::PFJet> > jets;
       iEvent.getByToken(jet_token, jets);
 
-      if(jets.size() >= 2)
+      if(jets->size() >= 2)
       {
-        reco::Jet& jet1 = jets[0];
-        reco::Jet& jet2 = jets[1];
+        reco::Jet jet1 = (*jets)[0];
+        reco::Jet jet2 = (*jets)[1];
 
         TLorentzVector jet1_vec(jet1.px(), jet1.py(), jet1.pz(), jet1.pt());
         TLorentzVector jet2_vec(jet2.px(), jet2.py(), jet2.pz(), jet2.pt());
