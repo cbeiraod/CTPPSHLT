@@ -6402,7 +6402,18 @@ process.HLT_PFJet500_v17 = cms.Path( process.HLTBeginSequence + process.hltL1sSi
 #process.HLT_PFJetFwd400_v15 = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 + process.hltPrePFJetFwd400 + process.HLTAK4CaloJetsSequence + process.hltSingleCaloFwdJet350 + process.HLTAK4PFJetsSequence + process.hltPFJetsCorrectedMatchedToCaloFwdJets350 + process.hltSinglePFFwdJet400 + process.HLTEndSequence )
 #process.HLT_DiJet110_35_Mjj650_PFMET110_v5 = cms.Path( process.HLTBeginSequence + process.hltL1DiJetVBF + process.hltPreDiJet11035Mjj650PFMET110 + process.HLTRecoMETSequence + process.hltCaloMETOpen + process.HLTHBHENoiseCleanerSequence + process.hltMetClean + process.hltCaloNoiseCleanedMET66 + process.HLTAK4PFJetsSequence + process.hltParticleFlowNoMu + process.hltPFMETVBFProducer + process.hltPFMETVBF110 + process.hltL1TPFJetsMatching + process.hltL1PFJetCategories + process.HLTEndSequence )
 process.HLTriggerFinalPath = cms.Path( process.hltGtStage2Digis + process.hltScalersRawToDigi + process.hltFEDSelector + process.hltTriggerSummaryAOD + process.hltTriggerSummaryRAW + process.hltBoolFalse )
-process.HLT_DiPFJetAve260_v10 = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 + process.hltPreDiPFJetAve260 + process.HLTAK4CaloJetsSequence + process.hltDiCaloJetAve210 + process.HLTAK4PFJetsSequence + process.hltDiPFJetAve260 + process.HLTEndSequence )
+
+process.hltL1DoubleJet150 = cms.EDFilter( "HLTL1TSeed",
+    L1SeedsLogicalExpression = cms.string( "L1_DoubleJet150er2p7" ),
+    L1EGammaInputTag = cms.InputTag( 'hltGtStage2Digis','EGamma' ),
+    L1JetInputTag = cms.InputTag( 'hltGtStage2Digis','Jet' ),
+    saveTags = cms.bool( True ),
+    L1ObjectMapInputTag = cms.InputTag( "hltGtStage2ObjectMap" ),
+    L1EtSumInputTag = cms.InputTag( 'hltGtStage2Digis','EtSum' ),
+    L1TauInputTag = cms.InputTag( 'hltGtStage2Digis','Tau' ),
+    L1MuonInputTag = cms.InputTag( 'hltGtStage2Digis','Muon' ),
+    L1GlobalInputTag = cms.InputTag( "hltGtStage2Digis" )
+)
 
 maxTracksPerArm = 1
 
@@ -6416,34 +6427,104 @@ process.ctppsXiAnalyzer.xiFromDijet = cms.bool(True)
 process.ctppsXiAnalyzer.maxXi = cms.double(0.03)
 process.ctppsXiAnalyzer.jetInputTag = cms.InputTag("hltAK4PFJets")
 
-process.ctppsDenominator = process.ctppsXiAnalyzer.clone()
-process.ctppsCoincidence = process.ctppsXiAnalyzer.clone()
+process.ctppsAll                 = process.ctppsXiAnalyzer.clone()
+process.ctppsCoincidence         = process.ctppsXiAnalyzer.clone()
+process.ctppsCoincidenceL1Single = process.ctppsXiAnalyzer.clone()
+process.ctppsCoincidenceL1Double = process.ctppsXiAnalyzer.clone()
 
 process.load("EventFilter.CTPPSRawToDigi.ctppsRawToDigi_cff")
 process.load("RecoCTPPS.Configuration.recoCTPPS_cff")
 process.load("UserCode.CTPPSHLT.hltCTPPSLocalTrackFilter_cfi")
 process.hltCTPPSLocalTrackFilter.maxTracksPerArm = cms.int32(maxTracksPerArm)
+
+
+# First get info on the coincidence requirement only:
 process.hltPreCTPPSCoincidence = cms.EDFilter( "HLTPrescaler",
     L1GtReadoutRecordTag = cms.InputTag( "hltGtStage2Digis" ),
     offset = cms.uint32( 0 )
 )
-process.HLT_CTPPSCoincidence_v0 = cms.Path( process.HLTBeginSequence + process.hltPreCTPPSCoincidence + process.ctppsRawToDigi + process.recoCTPPS + process.hltCTPPSLocalTrackFilter + process.HLTEndSequence )
-process.hltPreCTPPSCoincidenceL1 = cms.EDFilter( "HLTPrescaler",
-    L1GtReadoutRecordTag = cms.InputTag( "hltGtStage2Digis" ),
-    offset = cms.uint32( 0 )
-)
-process.HLT_CTPPSCoincidenceL1_v0 = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 + process.hltPreCTPPSCoincidenceL1 + process.ctppsRawToDigi + process.recoCTPPS + process.hltCTPPSLocalTrackFilter + process.HLTEndSequence )
-process.hltPreDiPFJetAve260 = cms.EDFilter( "HLTPrescaler",
-    L1GtReadoutRecordTag = cms.InputTag( "hltGtStage2Digis" ),
-    offset = cms.uint32( 0 )
-)
-process.HLT_CTPPS_DiPFJetAve260_v0 = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
-                                               process.hltPreDiPFJetAve260 +
-                                               process.ctppsRawToDigi + process.recoCTPPS + process.hltCTPPSLocalTrackFilter +
-                                               process.HLTAK4CaloJetsSequence +
-                                               process.hltDiCaloJetAve210 + process.HLTAK4PFJetsSequence +
-                                               process.hltDiPFJetAve260 + process.HLTEndSequence )
+process.HLT_CTPPSCoincidence_v0 = cms.Path( process.HLTBeginSequence +
+                                            process.hltPreCTPPSCoincidence +
+                                            process.HLTAK4CaloJetsSequence +
+                                            process.HLTAK4PFJetsSequence +
+                                            process.ctppsRawToDigi +
+                                            process.recoCTPPS +
+                                            process.ctppsAll +
+                                            process.hltCTPPSLocalTrackFilter +
+                                            process.ctppsCoincidence +
+                                            process.HLTEndSequence )
 
+process.hltPreCTPPSCoincidenceL1Single = cms.EDFilter( "HLTPrescaler",
+    L1GtReadoutRecordTag = cms.InputTag( "hltGtStage2Digis" ),
+    offset = cms.uint32( 0 )
+)
+process.HLT_CTPPSCoincidenceL1Single_v0 = cms.Path( process.HLTBeginSequence +
+                                                    process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                                    process.hltPreCTPPSCoincidenceL1Single +
+                                                    process.HLTAK4CaloJetsSequence +
+                                                    process.HLTAK4PFJetsSequence +
+                                                    process.ctppsRawToDigi +
+                                                    process.recoCTPPS +
+                                                    process.ctppsCoincidenceL1Single +
+                                                    process.hltCTPPSLocalTrackFilter +
+                                                    process.HLTEndSequence )
+
+process.hltPreCTPPSCoincidenceL1Double = cms.EDFilter( "HLTPrescaler",
+    L1GtReadoutRecordTag = cms.InputTag( "hltGtStage2Digis" ),
+    offset = cms.uint32( 0 )
+)
+process.HLT_CTPPSCoincidenceL1Double_v0 = cms.Path( process.HLTBeginSequence +
+                                                    process.hltL1DoubleJet150 +
+                                                    process.hltPreCTPPSCoincidenceL1Double +
+                                                    process.HLTAK4CaloJetsSequence +
+                                                    process.HLTAK4PFJetsSequence +
+                                                    process.ctppsRawToDigi +
+                                                    process.recoCTPPS +
+                                                    process.ctppsCoincidenceL1Double +
+                                                    process.hltCTPPSLocalTrackFilter +
+                                                    process.HLTEndSequence )
+
+# Then get info on combination with DiPFJetAve260
+process.ctppsDiPFJetAve260                  = process.ctppsXiAnalyzer.clone()
+process.ctppsDiPFJetAve260Coincidence       = process.ctppsXiAnalyzer.clone()
+process.ctppsDiPFJetAve260CoincidenceDouble = process.ctppsXiAnalyzer.clone()
+process.HLT_DiPFJetAve260_v10 = cms.Path( process.HLTBeginSequence +
+                                          process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                          process.hltPreDiPFJetAve260 +
+                                          process.HLTAK4CaloJetsSequence +
+                                          process.hltDiCaloJetAve210 +
+                                          process.HLTAK4PFJetsSequence +
+                                          process.hltDiPFJetAve260 +
+                                          process.ctppsDiPFJetAve260 +
+                                          process.HLTEndSequence )
+
+process.HLT_CTPPS_DiPFJetAve260_v0 = cms.Path( process.HLTBeginSequence +
+                                               process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                               process.hltPreDiPFJetAve260 +
+                                               process.ctppsRawToDigi +
+                                               process.recoCTPPS +
+                                               process.hltCTPPSLocalTrackFilter +
+                                               process.HLTAK4CaloJetsSequence +
+                                               process.hltDiCaloJetAve210 +
+                                               process.HLTAK4PFJetsSequence +
+                                               process.hltDiPFJetAve260 +
+                                               process.ctppsDiPFJetAve260Coincidence +
+                                               process.HLTEndSequence )
+
+process.HLT_CTPPS_DiPFJetAve260_Double_v0 = cms.Path( process.HLTBeginSequence +
+                                                      process.hltL1DoubleJet150 +
+                                                      process.hltPreDiPFJetAve260 +
+                                                      process.ctppsRawToDigi +
+                                                      process.recoCTPPS +
+                                                      process.hltCTPPSLocalTrackFilter +
+                                                      process.HLTAK4CaloJetsSequence +
+                                                      process.hltDiCaloJetAve210 +
+                                                      process.HLTAK4PFJetsSequence +
+                                                      process.hltDiPFJetAve260 +
+                                                      process.ctppsDiPFJetAve260CoincidenceDouble +
+                                                      process.HLTEndSequence )
+
+# Then get info on combination with DiPFJetAve240
 process.hltPreDiPFJetAve240 = cms.EDFilter( "HLTPrescaler",
     L1GtReadoutRecordTag = cms.InputTag( "hltGtStage2Digis" ),
     offset = cms.uint32( 0 )
@@ -6464,18 +6545,46 @@ process.hltDiPFJetAve240 = cms.EDFilter( "HLTDiPFJetAveFilter",
     triggerType = cms.int32( 85 ),
     minDphi = cms.double( -1.0 )
 )
-process.HLT_DiPFJetAve240_test = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
-                                           process.hltPreDiPFJetAve240 +
-                                           process.HLTAK4CaloJetsSequence +
-                                           process.hltDiCaloJetAve200 + process.HLTAK4PFJetsSequence +
-                                           process.hltDiPFJetAve240 + process.HLTEndSequence )
-process.HLT_CTPPS_DiPFJetAve240_test = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
-                                           process.hltPreDiPFJetAve240 +
-                                           process.ctppsRawToDigi + process.recoCTPPS + process.hltCTPPSLocalTrackFilter +
-                                           process.HLTAK4CaloJetsSequence +
-                                           process.hltDiCaloJetAve200 + process.HLTAK4PFJetsSequence +
-                                           process.hltDiPFJetAve240 + process.HLTEndSequence )
+process.ctppsDiPFJetAve240                  = process.ctppsXiAnalyzer.clone()
+process.ctppsDiPFJetAve240Coincidence       = process.ctppsXiAnalyzer.clone()
+process.ctppsDiPFJetAve240CoincidenceDouble = process.ctppsXiAnalyzer.clone()
+process.HLT_DiPFJetAve240_v0 = cms.Path( process.HLTBeginSequence +
+                                         process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                         process.hltPreDiPFJetAve240 +
+                                         process.HLTAK4CaloJetsSequence +
+                                         process.hltDiCaloJetAve200 +
+                                         process.HLTAK4PFJetsSequence +
+                                         process.hltDiPFJetAve240 +
+                                         process.ctppsDiPFJetAve240 +
+                                         process.HLTEndSequence )
 
+process.HLT_CTPPS_DiPFJetAve240_v0 = cms.Path( process.HLTBeginSequence +
+                                               process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                               process.hltPreDiPFJetAve240 +
+                                               process.ctppsRawToDigi +
+                                               process.recoCTPPS +
+                                               process.hltCTPPSLocalTrackFilter +
+                                               process.HLTAK4CaloJetsSequence +
+                                               process.hltDiCaloJetAve200 +
+                                               process.HLTAK4PFJetsSequence +
+                                               process.hltDiPFJetAve240 +
+                                               process.ctppsDiPFJetAve240Coincidence +
+                                               process.HLTEndSequence )
+
+process.HLT_CTPPS_DiPFJetAve240_Double_v0 = cms.Path( process.HLTBeginSequence +
+                                                      process.hltL1DoubleJet150 +
+                                                      process.hltPreDiPFJetAve240 +
+                                                      process.ctppsRawToDigi +
+                                                      process.recoCTPPS +
+                                                      process.hltCTPPSLocalTrackFilter +
+                                                      process.HLTAK4CaloJetsSequence +
+                                                      process.hltDiCaloJetAve200 +
+                                                      process.HLTAK4PFJetsSequence +
+                                                      process.hltDiPFJetAve240 +
+                                                      process.ctppsDiPFJetAve240CoincidenceDouble +
+                                                      process.HLTEndSequence )
+
+# Then get info on combination with DiPFJetAve220
 process.hltPreDiPFJetAve220 = cms.EDFilter( "HLTPrescaler",
     L1GtReadoutRecordTag = cms.InputTag( "hltGtStage2Digis" ),
     offset = cms.uint32( 0 )
@@ -6496,18 +6605,46 @@ process.hltDiPFJetAve220 = cms.EDFilter( "HLTDiPFJetAveFilter",
     triggerType = cms.int32( 85 ),
     minDphi = cms.double( -1.0 )
 )
-process.HLT_DiPFJetAve220_test = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
-                                           process.hltPreDiPFJetAve220 +
-                                           process.HLTAK4CaloJetsSequence +
-                                           process.hltDiCaloJetAve190 + process.HLTAK4PFJetsSequence +
-                                           process.hltDiPFJetAve220 + process.HLTEndSequence )
-process.HLT_CTPPS_DiPFJetAve220_test = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
-                                           process.hltPreDiPFJetAve220 +
-                                           process.ctppsRawToDigi + process.recoCTPPS + process.hltCTPPSLocalTrackFilter +
-                                           process.HLTAK4CaloJetsSequence +
-                                           process.hltDiCaloJetAve190 + process.HLTAK4PFJetsSequence +
-                                           process.hltDiPFJetAve220 + process.HLTEndSequence )
+process.ctppsDiPFJetAve220                  = process.ctppsXiAnalyzer.clone()
+process.ctppsDiPFJetAve220Coincidence       = process.ctppsXiAnalyzer.clone()
+process.ctppsDiPFJetAve220CoincidenceDouble = process.ctppsXiAnalyzer.clone()
+process.HLT_DiPFJetAve220_v0 = cms.Path( process.HLTBeginSequence +
+                                         process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                         process.hltPreDiPFJetAve220 +
+                                         process.HLTAK4CaloJetsSequence +
+                                         process.hltDiCaloJetAve190 +
+                                         process.HLTAK4PFJetsSequence +
+                                         process.hltDiPFJetAve220 +
+                                         process.ctppsDiPFJetAve220 +
+                                         process.HLTEndSequence )
 
+process.HLT_CTPPS_DiPFJetAve220_v0 = cms.Path( process.HLTBeginSequence +
+                                               process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                               process.hltPreDiPFJetAve220 +
+                                               process.ctppsRawToDigi +
+                                               process.recoCTPPS +
+                                               process.hltCTPPSLocalTrackFilter +
+                                               process.HLTAK4CaloJetsSequence +
+                                               process.hltDiCaloJetAve190 +
+                                               process.HLTAK4PFJetsSequence +
+                                               process.hltDiPFJetAve220 +
+                                               process.ctppsDiPFJetAve220Coincidence +
+                                               process.HLTEndSequence )
+
+process.HLT_CTPPS_DiPFJetAve220_Double_v0 = cms.Path( process.HLTBeginSequence +
+                                                      process.hltL1DoubleJet150 +
+                                                      process.hltPreDiPFJetAve220 +
+                                                      process.ctppsRawToDigi +
+                                                      process.recoCTPPS +
+                                                      process.hltCTPPSLocalTrackFilter +
+                                                      process.HLTAK4CaloJetsSequence +
+                                                      process.hltDiCaloJetAve190 +
+                                                      process.HLTAK4PFJetsSequence +
+                                                      process.hltDiPFJetAve220 +
+                                                      process.ctppsDiPFJetAve220CoincidenceDouble +
+                                                      process.HLTEndSequence )
+
+# Then get info on combination with DiPFJetAve200
 process.hltPreDiPFJetAve200 = cms.EDFilter( "HLTPrescaler",
     L1GtReadoutRecordTag = cms.InputTag( "hltGtStage2Digis" ),
     offset = cms.uint32( 0 )
@@ -6528,18 +6665,46 @@ process.hltDiPFJetAve200 = cms.EDFilter( "HLTDiPFJetAveFilter",
     triggerType = cms.int32( 85 ),
     minDphi = cms.double( -1.0 )
 )
-process.HLT_DiPFJetAve200_test = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
-                                           process.hltPreDiPFJetAve200 +
-                                           process.HLTAK4CaloJetsSequence +
-                                           process.hltDiCaloJetAve180 + process.HLTAK4PFJetsSequence +
-                                           process.hltDiPFJetAve200 + process.HLTEndSequence )
-process.HLT_CTPPS_DiPFJetAve200_test = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
-                                           process.hltPreDiPFJetAve200 +
-                                           process.ctppsRawToDigi + process.recoCTPPS + process.hltCTPPSLocalTrackFilter +
-                                           process.HLTAK4CaloJetsSequence +
-                                           process.hltDiCaloJetAve180 + process.HLTAK4PFJetsSequence +
-                                           process.hltDiPFJetAve200 + process.HLTEndSequence )
+process.ctppsDiPFJetAve200                  = process.ctppsXiAnalyzer.clone()
+process.ctppsDiPFJetAve200Coincidence       = process.ctppsXiAnalyzer.clone()
+process.ctppsDiPFJetAve200CoincidenceDouble = process.ctppsXiAnalyzer.clone()
+process.HLT_DiPFJetAve200_v0 = cms.Path( process.HLTBeginSequence +
+                                         process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                         process.hltPreDiPFJetAve200 +
+                                         process.HLTAK4CaloJetsSequence +
+                                         process.hltDiCaloJetAve180 +
+                                         process.HLTAK4PFJetsSequence +
+                                         process.hltDiPFJetAve200 +
+                                         process.ctppsDiPFJetAve200 +
+                                         process.HLTEndSequence )
 
+process.HLT_CTPPS_DiPFJetAve200_v0 = cms.Path( process.HLTBeginSequence +
+                                               process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                               process.hltPreDiPFJetAve200 +
+                                               process.ctppsRawToDigi +
+                                               process.recoCTPPS +
+                                               process.hltCTPPSLocalTrackFilter +
+                                               process.HLTAK4CaloJetsSequence +
+                                               process.hltDiCaloJetAve180 +
+                                               process.HLTAK4PFJetsSequence +
+                                               process.hltDiPFJetAve200 +
+                                               process.ctppsDiPFJetAve200Coincidence +
+                                               process.HLTEndSequence )
+
+process.HLT_CTPPS_DiPFJetAve200_Double_v0 = cms.Path( process.HLTBeginSequence +
+                                                      process.hltL1DoubleJet150 +
+                                                      process.hltPreDiPFJetAve200 +
+                                                      process.ctppsRawToDigi +
+                                                      process.recoCTPPS +
+                                                      process.hltCTPPSLocalTrackFilter +
+                                                      process.HLTAK4CaloJetsSequence +
+                                                      process.hltDiCaloJetAve180 +
+                                                      process.HLTAK4PFJetsSequence +
+                                                      process.hltDiPFJetAve200 +
+                                                      process.ctppsDiPFJetAve200CoincidenceDouble +
+                                                      process.HLTEndSequence )
+
+# Then get info on combination with DiPFJetAve180
 process.hltPreDiPFJetAve180 = cms.EDFilter( "HLTPrescaler",
     L1GtReadoutRecordTag = cms.InputTag( "hltGtStage2Digis" ),
     offset = cms.uint32( 0 )
@@ -6560,43 +6725,71 @@ process.hltDiPFJetAve180 = cms.EDFilter( "HLTDiPFJetAveFilter",
     triggerType = cms.int32( 85 ),
     minDphi = cms.double( -1.0 )
 )
-process.HLT_DiPFJetAve180_test = cms.Path( process.HLTBeginSequence + process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
-                                           process.hltPreDiPFJetAve180 +
-                                           process.HLTAK4CaloJetsSequence +
-                                           process.hltDiCaloJetAve170 + process.HLTAK4PFJetsSequence +
-                                           process.hltDiPFJetAve180 + process.HLTEndSequence )
-process.HLT_CTPPS_DiPFJetAve180_test = cms.Path( process.HLTBeginSequence +
-                                           process.ctppsRawToDigi + process.recoCTPPS +
-                                           process.HLTAK4CaloJetsSequence +
-                                           process.HLTAK4PFJetsSequence +
-                                           process.ctppsDenominator +
-                                           process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
-                                           process.hltPreDiPFJetAve180 +
-                                           process.hltCTPPSLocalTrackFilter +
-                                           process.ctppsCoincidence +
-                                           process.hltDiCaloJetAve170 +
-                                           process.hltDiPFJetAve180 + process.HLTEndSequence )
+process.ctppsDiPFJetAve180                  = process.ctppsXiAnalyzer.clone()
+process.ctppsDiPFJetAve180Coincidence       = process.ctppsXiAnalyzer.clone()
+process.ctppsDiPFJetAve180CoincidenceDouble = process.ctppsXiAnalyzer.clone()
+process.HLT_DiPFJetAve180_v0 = cms.Path( process.HLTBeginSequence +
+                                         process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                         process.hltPreDiPFJetAve180 +
+                                         process.HLTAK4CaloJetsSequence +
+                                         process.hltDiCaloJetAve170 +
+                                         process.HLTAK4PFJetsSequence +
+                                         process.hltDiPFJetAve180 +
+                                         process.ctppsDiPFJetAve180 +
+                                         process.HLTEndSequence )
 
+process.HLT_CTPPS_DiPFJetAve180_v0 = cms.Path( process.HLTBeginSequence +
+                                               process.hltL1sSingleJet170IorSingleJet180IorSingleJet200 +
+                                               process.hltPreDiPFJetAve180 +
+                                               process.ctppsRawToDigi +
+                                               process.recoCTPPS +
+                                               process.hltCTPPSLocalTrackFilter +
+                                               process.HLTAK4CaloJetsSequence +
+                                               process.hltDiCaloJetAve170 +
+                                               process.HLTAK4PFJetsSequence +
+                                               process.hltDiPFJetAve180 +
+                                               process.ctppsDiPFJetAve180Coincidence +
+                                               process.HLTEndSequence )
+
+process.HLT_CTPPS_DiPFJetAve180_Double_v0 = cms.Path( process.HLTBeginSequence +
+                                                      process.hltL1DoubleJet150 +
+                                                      process.hltPreDiPFJetAve180 +
+                                                      process.ctppsRawToDigi +
+                                                      process.recoCTPPS +
+                                                      process.hltCTPPSLocalTrackFilter +
+                                                      process.HLTAK4CaloJetsSequence +
+                                                      process.hltDiCaloJetAve170 +
+                                                      process.HLTAK4PFJetsSequence +
+                                                      process.hltDiPFJetAve180 +
+                                                      process.ctppsDiPFJetAve180CoincidenceDouble +
+                                                      process.HLTEndSequence )
+
+# Finally set up the schedule
 process.HLTSchedule = cms.Schedule( *(process.HLTriggerFirstPath,
 #                                      process.HLT_CaloJet500_NoJetID_v10,
 #                                      process.HLT_CaloJet550_NoJetID_v5,
 #                                      process.HLT_AK8PFJet360_TrimMass30_v14,
-                                      process.HLT_DiPFJetAve260_v10,
 #                                      process.HLT_AK8PFJet500_v12,
                                       process.HLT_PFJet500_v17,
 #                                      process.HLT_PFJetFwd400_v15,
 #                                      process.HLT_DiJet110_35_Mjj650_PFMET110_v5,
                                       process.HLT_CTPPSCoincidence_v0,
                                       process.HLT_CTPPSCoincidenceL1_v0,
+                                      process.HLT_DiPFJetAve260_v10,
                                       process.HLT_CTPPS_DiPFJetAve260_v0,
-                                      process.HLT_DiPFJetAve240_test,
-                                      process.HLT_CTPPS_DiPFJetAve240_test,
-                                      process.HLT_DiPFJetAve220_test,
-                                      process.HLT_CTPPS_DiPFJetAve220_test,
-                                      process.HLT_DiPFJetAve200_test,
-                                      process.HLT_CTPPS_DiPFJetAve200_test,
-                                      process.HLT_DiPFJetAve180_test,
-                                      process.HLT_CTPPS_DiPFJetAve180_test,
+                                      process.HLT_CTPPS_DiPFJetAve260_Double_v0,
+                                      process.HLT_DiPFJetAve240_v10,
+                                      process.HLT_CTPPS_DiPFJetAve240_v0,
+                                      process.HLT_CTPPS_DiPFJetAve240_Double_v0,
+                                      process.HLT_DiPFJetAve220_v10,
+                                      process.HLT_CTPPS_DiPFJetAve220_v0,
+                                      process.HLT_CTPPS_DiPFJetAve220_Double_v0,
+                                      process.HLT_DiPFJetAve200_v10,
+                                      process.HLT_CTPPS_DiPFJetAve200_v0,
+                                      process.HLT_CTPPS_DiPFJetAve200_Double_v0,
+                                      process.HLT_DiPFJetAve180_v10,
+                                      process.HLT_CTPPS_DiPFJetAve180_v0,
+                                      process.HLT_CTPPS_DiPFJetAve180_Double_v0,
                                       process.HLTriggerFinalPath ))
 
 
@@ -6617,7 +6810,7 @@ if 'PrescaleService' in process.__dict__:
 
 # limit the number of events to be processed
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( -1 )
+    input = cms.untracked.int32( 5 )
 )
 
 # enable TrigReport, TimeReport and MultiThreading
@@ -6659,7 +6852,7 @@ _customInfo['globalTags'][False] = "auto:run2_mc_GRun"
 _customInfo['inputFiles']={}
 _customInfo['inputFiles'][True]  = "file:RelVal_Raw_GRun_DATA.root"
 _customInfo['inputFiles'][False] = "file:RelVal_Raw_GRun_MC.root"
-_customInfo['maxEvents' ]=  -1
+_customInfo['maxEvents' ]=  5
 _customInfo['globalTag' ]= "92X_dataRun2_HLT_v7"
 _customInfo['inputFile' ]=  ['root://eoscms.cern.ch//eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/00175E91-D0AD-E711-A24F-02163E01451E.root']
 _customInfo['realData'  ]=  True
