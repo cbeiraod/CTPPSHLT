@@ -70,9 +70,9 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
       // ----------member data ---------------------------
 
       std::string suffix_;
-      double min_;
-      double max_;
-      int bins_;
+      double minXi_;
+      double maxXi_;
+      int binsXi_;
 
       edm::InputTag pixelLocalTrackInputTag_; // Input tag identifying the pixel detector
       edm::InputTag stripLocalTrackInputTag_; // Input tag identifying the strip detector
@@ -159,12 +159,12 @@ void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descripti
   desc.add<std::string>("suffix", std::string(""))
     ->setComment("String to add to the end of the name of the plots produced");
 
-  desc.add<double>("min", 0.0)
-    ->setComment("The minimum number on the axis of the plots");
-  desc.add<double>("max", 1.0)
-    ->setComment("The maximum number on the axis of the plots");
-  desc.add<int>("bins", 100)
-    ->setComment("The bins on the axis of the plots");
+  desc.add<double>("minXi", 0.0)
+    ->setComment("The minimum number on the Xi axis of the plots");
+  desc.add<double>("maxXi", 1.0)
+    ->setComment("The maximum number on the Xi axis of the plots");
+  desc.add<int>("binsXi", 100)
+    ->setComment("The bins on the Xi axis of the plots");
 
   // "slimmedJets"
   desc.add<edm::InputTag>("jetInputTag",   edm::InputTag("ak4PFJets")) // TODO: check if the reco tag is the same as used online for the trigger (it is probably hltAK4PFJetsCorrected)
@@ -180,9 +180,9 @@ void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descripti
 
 CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
   suffix_                    (iConfig.getParameter< std::string   > ("suffix")),
-  min_                       (iConfig.getParameter< double        > ("min")),
-  max_                       (iConfig.getParameter< double        > ("max")),
-  bins_                      (iConfig.getParameter< int           > ("bins")),
+  minXi_                     (iConfig.getParameter< double        > ("minXi")),
+  maxXi_                     (iConfig.getParameter< double        > ("maxXi")),
+  binsXi_                    (iConfig.getParameter< int           > ("binsXi")),
   pixelLocalTrackInputTag_   (iConfig.getParameter< edm::InputTag > ("pixelLocalTrackInputTag")),
   stripLocalTrackInputTag_   (iConfig.getParameter< edm::InputTag > ("stripLocalTrackInputTag")),
   diamondLocalTrackInputTag_ (iConfig.getParameter< edm::InputTag > ("diamondLocalTrackInputTag")),
@@ -248,26 +248,26 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
 
   if(detectorBitset_ != 0)
   {
-    Arm1Xi_ = fs->make<TH1D>(buildName("h_arm1xi", suffix_).c_str(),"Arm1 Xi;Xi;Events", bins_, min_, max_);
-    Arm2Xi_ = fs->make<TH1D>(buildName("h_arm2xi", suffix_).c_str(),"Arm2 Xi;Xi;Events", bins_, min_, max_);
+    Arm1Xi_ = fs->make<TH1D>(buildName("h_arm1xi", suffix_).c_str(),"Arm1 Xi;#Xi_{proton};Events", binsXi_, minXi_, maxXi_);
+    Arm2Xi_ = fs->make<TH1D>(buildName("h_arm2xi", suffix_).c_str(),"Arm2 Xi;#Xi_{proton};Events", binsXi_, minXi_, maxXi_);
   }
 
   if(xiFromDijet_)
   {
-    Arm1DijetXi_ = fs->make<TH1D>(buildName("h_arm1dijetxi", suffix_).c_str(),"Arm1 Dijet Xi;Xi;Events", bins_, min_, max_);
-    Arm2DijetXi_ = fs->make<TH1D>(buildName("h_arm2dijetxi", suffix_).c_str(),"Arm2 Dijet Xi;Xi;Events", bins_, min_, max_);
+    Arm1DijetXi_ = fs->make<TH1D>(buildName("h_arm1dijetxi", suffix_).c_str(),"Arm1 Dijet Xi;#Xi_{dijet};Events", binsXi_, minXi_, maxXi_);
+    Arm2DijetXi_ = fs->make<TH1D>(buildName("h_arm2dijetxi", suffix_).c_str(),"Arm2 Dijet Xi;#Xi_{dijet};Events", binsXi_, minXi_, maxXi_);
 
-    Arm1VsDijetXi_ = fs->make<TH2D>(buildName("h_arm1vsdijetxi", suffix_).c_str(), "Arm1 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}", bins_, min_, max_, bins_, min_, max_);
-    Arm2VsDijetXi_ = fs->make<TH2D>(buildName("h_arm2vsdijetxi", suffix_).c_str(), "Arm2 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}", bins_, min_, max_, bins_, min_, max_);
+    Arm1VsDijetXi_ = fs->make<TH2D>(buildName("h_arm1vsdijetxi", suffix_).c_str(), "Arm1 Xi Vs Dijet Xi;#xi_{proton};#xi_{dijet}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
+    Arm2VsDijetXi_ = fs->make<TH2D>(buildName("h_arm2vsdijetxi", suffix_).c_str(), "Arm2 Xi Vs Dijet Xi;#xi_{proton};#xi_{dijet}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
   }
 
   if(xiFromDilepton_)
   {
-    Arm1DileptonXi_ = fs->make<TH1D>(buildName("h_arm1dileptonxi", suffix_).c_str(),"Arm1 Dilepton Xi;Xi;Events", bins_, min_, max_);
-    Arm2DileptonXi_ = fs->make<TH1D>(buildName("h_arm2dileptonxi", suffix_).c_str(),"Arm2 Dilepton Xi;Xi;Events", bins_, min_, max_);
+    Arm1DileptonXi_ = fs->make<TH1D>(buildName("h_arm1dileptonxi", suffix_).c_str(),"Arm1 Dilepton Xi;#Xi_{dilepton};Events", binsXi_, minXi_, maxXi_);
+    Arm2DileptonXi_ = fs->make<TH1D>(buildName("h_arm2dileptonxi", suffix_).c_str(),"Arm2 Dilepton Xi;#Xi_{dilepton};Events", binsXi_, minXi_, maxXi_);
 
-    Arm1VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm1vsdileptonxi", suffix_).c_str(), "Arm1 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}", bins_, min_, max_, bins_, min_, max_);
-    Arm2VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm2vsdileptonxi", suffix_).c_str(), "Arm2 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}", bins_, min_, max_, bins_, min_, max_);
+    Arm1VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm1vsdileptonxi", suffix_).c_str(), "Arm1 Xi Vs Dilepton Xi;#xi_{proton};#xi_{dilepton}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
+    Arm2VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm2vsdileptonxi", suffix_).c_str(), "Arm2 Xi Vs Dilepton Xi;#xi_{proton};#xi_{dilepton}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
   }
 
 
