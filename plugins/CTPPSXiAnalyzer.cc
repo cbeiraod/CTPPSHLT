@@ -14,6 +14,7 @@
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/JetReco/interface/PFJet.h"
 
 #include "DataFormats/Common/interface/Ref.h"
 #include "DataFormats/Common/interface/Handle.h"
@@ -88,6 +89,8 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
       edm::EDGetTokenT<std::vector<pat::Electron> > pat_electron_token;
       //edm::EDGetTokenT<std::vector<reco::Vertex> > PV_token;
 
+      edm::EDGetTokenT<std::vector<reco::PFJet> > jet_token;
+
       bool usePixel_;
       bool useStrip_;
       bool useDiamond_;
@@ -144,7 +147,8 @@ void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descripti
   desc.add<bool>("xiFromDilepton", false)
     ->setComment("whether to reconstruct the xi values from the dilepton system"); // TODO: implement this when set to true
 
-  desc.add<edm::InputTag>("jetInputTag",   edm::InputTag("slimmedJets")) // TODO: change default to the reco value, not the miniaod value
+  // "slimmedJets"
+  desc.add<edm::InputTag>("jetInputTag",   edm::InputTag("ak4PFJets")) // TODO: check if the reco tag is the same as used online for the trigger (it is probably hltAK4PFJetsCorrected)
     ->setComment("input tag of the jet collection");
   desc.add<edm::InputTag>("electronInputTag",   edm::InputTag("slimmedElectrons")) // TODO: change default to the reco value, not the miniaod value
     ->setComment("input tag of the electron collection");
@@ -193,7 +197,9 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
       pat_jet_token = consumes< std::vector<pat::Jet> >( jetInputTag_ );
     }
     else
-    {}
+    {
+      jet_token = consumes< std::vector<reco::PFJet> >( jetInputTag_ );
+    }
   }
 
   if(xiFromDilepton_)
@@ -209,9 +215,23 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
 
   //PV_token = consumes<std::vector<reco::Vertex> > (edm::InputTag("offlineSlimmedPrimaryVertices"));
 
+  if(detectorBitset_ != 0)
+  {
+    Arm1Xi_ = fs->make<TH1D>("h_arm1xi","Arm1 Xi;Xi;Events",100,0,1);
+    Arm2Xi_ = fs->make<TH1D>("h_arm2xi","Arm2 Xi;Xi;Events",100,0,1);
+  }
 
-  Arm1Xi_ = fs->make<TH1D>("h_arm1xi","Arm1 Xi;Xi;Events",100,0,1);
-  Arm2Xi_ = fs->make<TH1D>("h_arm2xi","Arm2 Xi;Xi;Events",100,0,1);
+  if(xiFromDijet_)
+  {
+    Arm1DijetXi_ = fs->make<TH1D>("h_arm1dijetxi","Arm1 Dijet Xi;Xi;Events",100,0,1);
+    Arm2DijetXi_ = fs->make<TH1D>("h_arm2dijetxi","Arm2 Dijet Xi;Xi;Events",100,0,1);
+  }
+
+  if(xiFromDilepton_)
+  {
+    Arm1DileptonXi_ = fs->make<TH1D>("h_arm1dileptonxi","Arm1 Dilepton Xi;Xi;Events",100,0,1);
+    Arm2DileptonXi_ = fs->make<TH1D>("h_arm2dileptonxi","Arm2 Dilepton Xi;Xi;Events",100,0,1);
+  }
 
 
 
@@ -241,6 +261,10 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
 {
   std::vector<double> arm1Xis;
   std::vector<double> arm2Xis;
+  std::vector<double> arm1DijetXis;
+  std::vector<double> arm2DijetXis;
+  //std::vector<double> arm1DileptonXis;
+  //std::vector<double> arm2DileptonXis;
 
   if(usePixel_)
   {
@@ -334,6 +358,58 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
             Arm2Xi_->Fill(xi);
           }
         }
+      }
+    }
+  }
+
+  if(xiFromDijet_)
+  {
+    if(usePATObjects_)
+    {
+      edm::Handle< std::vector<pat::Jet> > jets;
+      iEvent.getByToken(pat_jet_token, jets);
+
+      if(jets.size() >= 2)
+      {
+        pat::Jet& jet1 = jets[0];
+        pat::Jet& jet2 = jets[1];
+
+        TLorentzVector jet1_vec(jet1.px(), jet1.py(), jet1.pz(), jet1.pt());
+        TLorentzVector jet2_vec(jet2.px(), jet2.py(), jet2.pz(), jet2.pt());
+        TLorentzVector system = jet1_vec + jet2_vec;
+
+        double mass = system.M();
+        double rapidity = system.Rapidity();
+
+        double xi1 = std::sqrt(mass*mass * std::exp(2.0 * rapidity) / (13000.0*13000.0));
+        double xi2 = xi1 * std::exp(-2.0 * rapidity);
+
+        Arm1DijetXi_->Fill(xi1);
+        Arm2DijetXi_->Fill(xi2);
+      }
+    }
+    else
+    {
+      edm::Handle< std::vector<reco::PFJet> > jets;
+      iEvent.getByToken(jet_token, jets);
+
+      if(jets.size() >= 2)
+      {
+        reco::Jet& jet1 = jets[0];
+        reco::Jet& jet2 = jets[1];
+
+        TLorentzVector jet1_vec(jet1.px(), jet1.py(), jet1.pz(), jet1.pt());
+        TLorentzVector jet2_vec(jet2.px(), jet2.py(), jet2.pz(), jet2.pt());
+        TLorentzVector system = jet1_vec + jet2_vec;
+
+        double mass = system.M();
+        double rapidity = system.Rapidity();
+
+        double xi1 = std::sqrt(mass*mass * std::exp(2.0 * rapidity) / (13000.0*13000.0));
+        double xi2 = xi1 * std::exp(-2.0 * rapidity);
+
+        Arm1DijetXi_->Fill(xi1);
+        Arm2DijetXi_->Fill(xi2);
       }
     }
   }
