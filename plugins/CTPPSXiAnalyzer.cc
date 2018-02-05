@@ -157,9 +157,9 @@ void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descripti
 
   desc.add<double>("min", 0.0)
     ->setComment("The minimum number on the axis of the plots");
-  desc.add<double>("max", 0.0)
+  desc.add<double>("max", 1.0)
     ->setComment("The maximum number on the axis of the plots");
-  desc.add<int>("bins", 0.0)
+  desc.add<int>("bins", 100)
     ->setComment("The bins on the axis of the plots");
 
   // "slimmedJets"
