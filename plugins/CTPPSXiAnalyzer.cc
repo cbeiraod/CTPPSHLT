@@ -131,23 +131,31 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
       TH1D* Arm2DijetXi_;
       TH1D* Arm1DileptonXi_;
       TH1D* Arm2DileptonXi_;
+      TH1D* Arm1XiMatchedDijet_;
+      TH1D* Arm2XiMatchedDijet_;
+      TH1D* Arm1XiMatchedDilepton_;
+      TH1D* Arm2XiMatchedDilepton_;
 
       TH2D* Arm1VsDijetXi_;
       TH2D* Arm2VsDijetXi_;
       TH2D* Arm1VsDileptonXi_;
       TH2D* Arm2VsDileptonXi_;
+      TH2D* Arm1VsDijetXiMatched_;
+      TH2D* Arm2VsDijetXiMatched_;
+      TH2D* Arm1VsDileptonXiMatched_;
+      TH2D* Arm2VsDileptonXiMatched_;
 
       TH1D* ProtonMass_;
       TH1D* ProtonRapidity_;
       TH2D* ProtonMassVsRapidity_;
 
-      TH1D* ProtonMassExclusiveDijet_;
-      TH1D* ProtonRapidityExclusiveDijet_;
-      TH2D* ProtonMassVsRapidityExclusiveDijet_;
+      TH1D* ProtonMassMatchedDijet_;
+      TH1D* ProtonRapidityMatchedDijet_;
+      TH2D* ProtonMassVsRapidityMatchedDijet_;
 
-      TH1D* ProtonMassExclusiveDilepton_;
-      TH1D* ProtonRapidityExclusiveDilepton_;
-      TH2D* ProtonMassVsRapidityExclusiveDilepton_;
+      TH1D* ProtonMassMatchedDilepton_;
+      TH1D* ProtonRapidityMatchedDilepton_;
+      TH2D* ProtonMassVsRapidityMatchedDilepton_;
 
       TH1D* DijetMass_;
       TH1D* DijetRapidity_;
@@ -192,16 +200,16 @@ void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descripti
   desc.add<int>("binsXi", 100)
     ->setComment("The bins on the Xi axis of the plots");
 
-  desc.add<double>("minMass", 200.0)
+  desc.add<double>("minMass", 100.0)
     ->setComment("The minimum number on the Mass axis of the plots");
-  desc.add<double>("maxMass", 500.0)
+  desc.add<double>("maxMass", 400.0)
     ->setComment("The maximum number on the Mass axis of the plots");
   desc.add<int>("binsMass", 100)
     ->setComment("The bins on the Mass axis of the plots");
 
-  desc.add<double>("minRapidity", -3.0)
+  desc.add<double>("minRapidity", -1.8)
     ->setComment("The minimum number on the Rapidity axis of the plots");
-  desc.add<double>("maxRapidity", 3.0)
+  desc.add<double>("maxRapidity", 1.8)
     ->setComment("The maximum number on the Rapidity axis of the plots");
   desc.add<int>("binsRapidity", 100)
     ->setComment("The bins on the Rapidity axis of the plots");
@@ -301,18 +309,24 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
     ProtonRapidity_       = fs->make<TH1D>(buildName("h_protonRapidity", suffix_).c_str(),"Proton Rapidity;y_{proton};Events", binsRapidity_, minRapidity_, maxRapidity_);
     ProtonMassVsRapidity_ = fs->make<TH2D>(buildName("h_proton_massVSrapidity", suffix_).c_str(),"Proton Mass vs Rapidity;M_{proton};y_{proton}", binsMass_, minMass_, maxMass_, binsRapidity_, minRapidity_, maxRapidity_);
 
-    ProtonMassExclusiveDijet_           = fs->make<TH1D>(buildName("h_protonMass_exclusive", suffix_).c_str(),"Proton Mass;M_{proton};Events", binsMass_, minMass_, maxMass_);
-    ProtonRapidityExclusiveDijet_       = fs->make<TH1D>(buildName("h_protonRapidity_exclusive", suffix_).c_str(),"Proton Rapidity;y_{proton};Events", binsRapidity_, minRapidity_, maxRapidity_);
-    ProtonMassVsRapidityExclusiveDijet_ = fs->make<TH2D>(buildName("h_proton_massVSrapidity_exclusive", suffix_).c_str(),"Proton Mass vs Rapidity;M_{proton};y_{proton}", binsMass_, minMass_, maxMass_, binsRapidity_, minRapidity_, maxRapidity_);
+    ProtonMassMatchedDijet_           = fs->make<TH1D>(buildName("h_protonMass_matched", suffix_).c_str(),"Proton Mass;M_{proton};Events", binsMass_, minMass_, maxMass_);
+    ProtonRapidityMatchedDijet_       = fs->make<TH1D>(buildName("h_protonRapidity_matched", suffix_).c_str(),"Proton Rapidity;y_{proton};Events", binsRapidity_, minRapidity_, maxRapidity_);
+    ProtonMassVsRapidityMatchedDijet_ = fs->make<TH2D>(buildName("h_proton_massVSrapidity_matched", suffix_).c_str(),"Proton Mass vs Rapidity;M_{proton};y_{proton}", binsMass_, minMass_, maxMass_, binsRapidity_, minRapidity_, maxRapidity_);
   }
 
   if(xiFromDijet_)
   {
+    Arm1XiMatchedDijet_ = fs->make<TH1D>(buildName("h_arm1xi_matcheddijet", suffix_).c_str(),"Arm1 Xi;#xi_{proton};Events", binsXi_, minXi_, maxXi_);
+    Arm2XiMatchedDijet_ = fs->make<TH1D>(buildName("h_arm2xi_matcheddijet", suffix_).c_str(),"Arm2 Xi;#xi_{proton};Events", binsXi_, minXi_, maxXi_);
+
     Arm1DijetXi_ = fs->make<TH1D>(buildName("h_arm1dijetxi", suffix_).c_str(),"Arm1 Dijet Xi;#xi_{dijet};Events", binsXi_, minXi_, maxXi_);
     Arm2DijetXi_ = fs->make<TH1D>(buildName("h_arm2dijetxi", suffix_).c_str(),"Arm2 Dijet Xi;#xi_{dijet};Events", binsXi_, minXi_, maxXi_);
 
     Arm1VsDijetXi_ = fs->make<TH2D>(buildName("h_arm1vsdijetxi", suffix_).c_str(), "Arm1 Xi Vs Dijet Xi;#xi_{proton};#xi_{dijet}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
     Arm2VsDijetXi_ = fs->make<TH2D>(buildName("h_arm2vsdijetxi", suffix_).c_str(), "Arm2 Xi Vs Dijet Xi;#xi_{proton};#xi_{dijet}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
+
+    Arm1VsDijetXiMatched_ = fs->make<TH2D>(buildName("h_arm1vsdijetxi_matched", suffix_).c_str(), "Arm1 Xi Vs Dijet Xi;#xi_{proton};#xi_{dijet}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
+    Arm2VsDijetXiMatched_ = fs->make<TH2D>(buildName("h_arm2vsdijetxi_matched", suffix_).c_str(), "Arm2 Xi Vs Dijet Xi;#xi_{proton};#xi_{dijet}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
 
     DijetMass_           = fs->make<TH1D>(buildName("h_dijetMass", suffix_).c_str(), "Dijet Mass;M_{dijet};Events", binsMass_, minMass_, maxMass_);
     DijetRapidity_       = fs->make<TH1D>(buildName("h_dijetRapidity", suffix_).c_str(), "Dijet Rapidity;y_{dijet};Events", binsRapidity_, minRapidity_, maxRapidity_);
@@ -321,11 +335,17 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
 
   if(xiFromDilepton_)
   {
+    Arm1XiMatchedDilepton_ = fs->make<TH1D>(buildName("h_arm1xi_matcheddilepton", suffix_).c_str(),"Arm1 Xi;#xi_{proton};Events", binsXi_, minXi_, maxXi_);
+    Arm2XiMatchedDilepton_ = fs->make<TH1D>(buildName("h_arm2xi_matcheddilepton", suffix_).c_str(),"Arm2 Xi;#xi_{proton};Events", binsXi_, minXi_, maxXi_);
+
     Arm1DileptonXi_ = fs->make<TH1D>(buildName("h_arm1dileptonxi", suffix_).c_str(),"Arm1 Dilepton Xi;#xi_{dilepton};Events", binsXi_, minXi_, maxXi_);
     Arm2DileptonXi_ = fs->make<TH1D>(buildName("h_arm2dileptonxi", suffix_).c_str(),"Arm2 Dilepton Xi;#xi_{dilepton};Events", binsXi_, minXi_, maxXi_);
 
     Arm1VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm1vsdileptonxi", suffix_).c_str(), "Arm1 Xi Vs Dilepton Xi;#xi_{proton};#xi_{dilepton}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
     Arm2VsDileptonXi_ = fs->make<TH2D>(buildName("h_arm2vsdileptonxi", suffix_).c_str(), "Arm2 Xi Vs Dilepton Xi;#xi_{proton};#xi_{dilepton}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
+
+    Arm1VsDileptonXiMatched_ = fs->make<TH2D>(buildName("h_arm1vsdileptonxi_matched", suffix_).c_str(), "Arm1 Xi Vs Dilepton Xi;#xi_{proton};#xi_{dilepton}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
+    Arm2VsDileptonXiMatched_ = fs->make<TH2D>(buildName("h_arm2vsdileptonxi_matched", suffix_).c_str(), "Arm2 Xi Vs Dilepton Xi;#xi_{proton};#xi_{dilepton}", binsXi_, minXi_, maxXi_, binsXi_, minXi_, maxXi_);
 
     DileptonMass_           = fs->make<TH1D>(buildName("h_dileptonMass", suffix_).c_str(), "Dijet Mass;M_{dilepton};Events", binsMass_, minMass_, maxMass_);
     DileptonRapidity_       = fs->make<TH1D>(buildName("h_dileptonRapidity", suffix_).c_str(), "Dijet Rapidity;y_{dilepton};Events", binsRapidity_, minRapidity_, maxRapidity_);
@@ -370,7 +390,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
 {
   std::vector<double> arm1Xis;
   std::vector<double> arm2Xis;
-  std::vector<protonReco> protonMasses;
+  std::vector<protonReco> protonPairs;
   double arm1DijetXi = -1;
   double arm2DijetXi = -1;
   double jetMass = -1;
@@ -493,7 +513,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
       ProtonRapidity_->Fill(tmp.rapidity);
       ProtonMassVsRapidity_->Fill(tmp.mass, tmp.rapidity);
 
-      protonMasses.push_back(std::move(tmp));
+      protonPairs.push_back(std::move(tmp));
     }
   }
 
@@ -587,37 +607,43 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
       DijetRapidity_->Fill(jetRapidity);
       DijetMassVsRapidity_->Fill(jetMass, jetRapidity);
 
-      int index = -1;
+      int match = -1;
       double minDistance = 0;
-      for(size_t i = 0; i < protonMasses.size(); ++i)
+      for(size_t i = 0; i < protonPairs.size(); ++i)
       {
-        double protonMass = protonMasses[i].mass;
-        double protonRapidity = protonMasses[i].rapidity;
+        double protonMass = protonPairs[i].mass;
+        double protonRapidity = protonPairs[i].rapidity;
 
         double massDifference = jetMass - protonMass;
         double rapidityDifference = jetRapidity - protonRapidity;
         double distance = std::sqrt(std::pow(massDifference, 2) - std::pow(rapidityDifference, 2));
 
-        if(index == -1)
+        if(match == -1)
         {
           minDistance = distance;
-          index = i;
+          match = i;
         }
         else
         {
           if(distance < minDistance)
           {
             minDistance = distance;
-            index = i;
+            match = i;
           }
         }
       }
 
-      if(index > -1)
+      if(match > -1)
       {
-        ProtonMassExclusiveDijet_->Fill(protonMasses[index].mass);
-        ProtonRapidityExclusiveDijet_->Fill(protonMasses[index].rapidity);
-        ProtonMassVsRapidityExclusiveDijet_->Fill(protonMasses[index].mass, protonMasses[index].rapidity);
+        ProtonMassMatchedDijet_->Fill(protonPairs[match].mass);
+        ProtonRapidityMatchedDijet_->Fill(protonPairs[match].rapidity);
+        ProtonMassVsRapidityMatchedDijet_->Fill(protonPairs[match].mass, protonPairs[match].rapidity);
+
+        Arm1XiMatchedDijet_->Fill(protonPairs[match].xi1);
+        Arm2XiMatchedDijet_->Fill(protonPairs[match].xi2);
+
+        Arm1VsDijetXiMatched_->Fill(protonPairs[match].xi1, arm1DijetXi);
+        Arm2VsDijetXiMatched_->Fill(protonPairs[match].xi2, arm2DijetXi);
       }
     }
   }
