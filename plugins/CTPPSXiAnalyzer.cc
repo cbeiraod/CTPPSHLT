@@ -165,6 +165,17 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
       TH1D* DileptonRapidity_;
       TH2D* DileptonMassVsRapidity_;
 
+      TH2D* MassVsDijet_;
+      TH2D* RapidityVsDijet_;
+
+      TH2D* MassVsDilepton_;
+      TH2D* RapidityVsDilepton_;
+
+      TH1D* DijetMassFraction_;
+      TH1D* DijetRapidityDifference_;
+
+      TH1D* DileptonMassFraction_;
+      TH1D* DileptonRapidityDifference_;
 };
 
 void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions)
@@ -331,6 +342,12 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
     DijetMass_           = fs->make<TH1D>(buildName("h_dijetMass", suffix_).c_str(), "Dijet Mass;M_{dijet};Events", binsMass_, minMass_, maxMass_);
     DijetRapidity_       = fs->make<TH1D>(buildName("h_dijetRapidity", suffix_).c_str(), "Dijet Rapidity;y_{dijet};Events", binsRapidity_, minRapidity_, maxRapidity_);
     DijetMassVsRapidity_ = fs->make<TH2D>(buildName("h_dijet_massVSrapidity", suffix_).c_str(),"Dijet Mass vs Rapidity;M_{dijet};y_{dijet}", binsMass_, minMass_, maxMass_, binsRapidity_, minRapidity_, maxRapidity_);
+
+    MassVsDijet_ = fs->make<TH2D>(buildName("h_massVSdijet", suffix_).c_str(), "Mass;M_{proton};M_{dijet}", binsMass_, minMass_, maxMass_, binsMass_, minMass_, maxMass_);
+    RapidityVsDijet_ = fs->make<TH2D>(buildName("h_rapidityVSdijet", suffix_).c_str(), "Rapidity;y_{proton};y_{dijet}", binsRapidity_, minRapidity_, maxRapidity_, binsRapidity_, minRapidity_, maxRapidity_);
+
+    DijetMassFraction_ = fs->make<TH1D>(buildName("h_dijetMassFraction", suffix_).c_str(), "Mass Fraction;M_{dijet}/M_{proton};Events", 100, 0.0, 2.0);
+    DijetRapidityDifference_ = fs->make<TH1D>(buildName("h_dijetRapidityDifference", suffix_).c_str(), "Rapidity Difference;y_{dijet}-y_{proton}", 100, -1.0, 1.0);
   }
 
   if(xiFromDilepton_)
@@ -350,6 +367,12 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
     DileptonMass_           = fs->make<TH1D>(buildName("h_dileptonMass", suffix_).c_str(), "Dijet Mass;M_{dilepton};Events", binsMass_, minMass_, maxMass_);
     DileptonRapidity_       = fs->make<TH1D>(buildName("h_dileptonRapidity", suffix_).c_str(), "Dijet Rapidity;y_{dilepton};Events", binsRapidity_, minRapidity_, maxRapidity_);
     DileptonMassVsRapidity_ = fs->make<TH2D>(buildName("h_dilepton_massVSrapidity", suffix_).c_str(),"Dijet Mass vs Rapidity;M_{dilepton};y_{dilepton}", binsMass_, minMass_, maxMass_, binsRapidity_, minRapidity_, maxRapidity_);
+
+    MassVsDilepton_ = fs->make<TH2D>(buildName("h_massVSdilepton", suffix_).c_str(), "Mass;M_{proton};M_{dilepton}", binsMass_, minMass_, maxMass_, binsMass_, minMass_, maxMass_);
+    RapidityVsDilepton_ = fs->make<TH2D>(buildName("h_rapidityVSdilepton", suffix_).c_str(), "Rapidity;y_{proton};y_{dilepton}", binsRapidity_, minRapidity_, maxRapidity_, binsRapidity_, minRapidity_, maxRapidity_);
+
+    DileptonMassFraction_ = fs->make<TH1D>(buildName("h_dileptonMassFraction", suffix_).c_str(), "Mass Fraction;M_{dilepton}/M_{proton};Events", 100, 0.0, 2.0);
+    DileptonRapidityDifference_ = fs->make<TH1D>(buildName("h_dileptonRapidityDifference", suffix_).c_str(), "Rapidity Difference;y_{dilepton}-y_{proton}", 100, -1.0, 1.0);
   }
 
 
@@ -644,6 +667,12 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
 
         Arm1VsDijetXiMatched_->Fill(protonPairs[match].xi1, arm1DijetXi);
         Arm2VsDijetXiMatched_->Fill(protonPairs[match].xi2, arm2DijetXi);
+
+        MassVsDijet_->Fill(protonPairs[match].mass, jetMass);
+        RapidityVsDijet_->Fill(protonPairs[match].rapidity, jetRapidity);
+
+        DijetMassFraction_->Fill(jetMass/protonPairs[match].mass);
+        DijetRapidityDifference_->Fill(jetRapidity - protonPairs[match].rapidity);
       }
     }
   }
