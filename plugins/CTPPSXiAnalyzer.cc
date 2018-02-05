@@ -15,6 +15,20 @@
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 
+#include "DataFormats/Common/interface/Ref.h"
+#include "DataFormats/Common/interface/Handle.h"
+
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+
+#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
+
+#include "DataFormats/Common/interface/DetSet.h"
+#include "DataFormats/Common/interface/DetSetVector.h"
+
+#include "DataFormats/CTPPSDetId/interface/CTPPSPixelDetId.h"
+#include "DataFormats/CTPPSDetId/interface/TotemRPDetId.h"
+#include "DataFormats/CTPPSDetId/interface/CTPPSDiamondDetId.h"
+
 #include <sstream>
 #include <vector>
 #include <utility> // for std::pair
