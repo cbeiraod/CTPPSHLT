@@ -15,9 +15,9 @@
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 
-#include <stringstream>
+#include <sstream>
 #include <vector>
-#include <pair>
+#include <utility> // for std::pair
 
 
 
