@@ -156,7 +156,6 @@ void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descripti
 }
 
 CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
-  EDAnalyzer(iConfig),
   pixelLocalTrackInputTag_   (iConfig.getParameter< edm::InputTag > ("pixelLocalTrackInputTag")),
   stripLocalTrackInputTag_   (iConfig.getParameter< edm::InputTag > ("stripLocalTrackInputTag")),
   diamondLocalTrackInputTag_ (iConfig.getParameter< edm::InputTag > ("diamondLocalTrackInputTag")),
@@ -256,7 +255,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
       {
         if(track.isValid())
         {
-          double x_mm = track.getX();
+          double x_mm = track.getX0();
           // Here apply corrections to x
           double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
 
@@ -288,7 +287,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
       {
         if(track.isValid())
         {
-          double x_mm = track.getX();
+          double x_mm = track.getX0();
           // Here apply corrections to x
           double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
 
@@ -320,7 +319,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
       {
         if(track.isValid())
         {
-          double x_mm = track.getX();
+          double x_mm = track.getX0();
           // Here apply corrections to x
           double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
 
