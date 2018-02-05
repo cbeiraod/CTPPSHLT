@@ -69,6 +69,11 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
 
       // ----------member data ---------------------------
 
+      std::string suffix_;
+      double min_;
+      double max_;
+      int bins_;
+
       edm::InputTag pixelLocalTrackInputTag_; // Input tag identifying the pixel detector
       edm::InputTag stripLocalTrackInputTag_; // Input tag identifying the strip detector
       edm::InputTag diamondLocalTrackInputTag_; // Input tag identifying the diamond detector
@@ -151,6 +156,16 @@ void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descripti
   desc.add<bool>("xiFromDilepton", false)
     ->setComment("whether to reconstruct the xi values from the dilepton system"); // TODO: implement this when set to true
 
+  desc.add<std::string>("suffix", std::string(""))
+    ->setComment("String to add to the end of the name of the plots produced");
+
+  desc.add<double>("min", 0.0)
+    ->setComment("The minimum number on the axis of the plots");
+  desc.add<double>("max", 0.0)
+    ->setComment("The maximum number on the axis of the plots");
+  desc.add<int>("bins", 0.0)
+    ->setComment("The bins on the axis of the plots");
+
   // "slimmedJets"
   desc.add<edm::InputTag>("jetInputTag",   edm::InputTag("ak4PFJets")) // TODO: check if the reco tag is the same as used online for the trigger (it is probably hltAK4PFJetsCorrected)
     ->setComment("input tag of the jet collection");
@@ -164,6 +179,10 @@ void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descripti
 }
 
 CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
+  suffix_                    (iConfig.getParameter< std::string   > ("suffix")),
+  min_                       (iConfig.getParameter< double        > ("min")),
+  max_                       (iConfig.getParameter< double        > ("max")),
+  bins_                      (iConfig.getParameter< int           > ("bins")),
   pixelLocalTrackInputTag_   (iConfig.getParameter< edm::InputTag > ("pixelLocalTrackInputTag")),
   stripLocalTrackInputTag_   (iConfig.getParameter< edm::InputTag > ("stripLocalTrackInputTag")),
   diamondLocalTrackInputTag_ (iConfig.getParameter< edm::InputTag > ("diamondLocalTrackInputTag")),
@@ -221,26 +240,26 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
 
   if(detectorBitset_ != 0)
   {
-    Arm1Xi_ = fs->make<TH1D>("h_arm1xi","Arm1 Xi;Xi;Events",100,0,1);
-    Arm2Xi_ = fs->make<TH1D>("h_arm2xi","Arm2 Xi;Xi;Events",100,0,1);
+    Arm1Xi_ = fs->make<TH1D>("h_arm1xi","Arm1 Xi;Xi;Events", bins_, min_ max_);
+    Arm2Xi_ = fs->make<TH1D>("h_arm2xi","Arm2 Xi;Xi;Events", bins_, min_ max_);
   }
 
   if(xiFromDijet_)
   {
-    Arm1DijetXi_ = fs->make<TH1D>("h_arm1dijetxi","Arm1 Dijet Xi;Xi;Events",100,0,1);
-    Arm2DijetXi_ = fs->make<TH1D>("h_arm2dijetxi","Arm2 Dijet Xi;Xi;Events",100,0,1);
+    Arm1DijetXi_ = fs->make<TH1D>("h_arm1dijetxi","Arm1 Dijet Xi;Xi;Events", bins_, min_ max_);
+    Arm2DijetXi_ = fs->make<TH1D>("h_arm2dijetxi","Arm2 Dijet Xi;Xi;Events", bins_, min_ max_);
 
-    Arm1VsDijetXi_ = fs->make<TH2D>("h_arm1vsdijetxi", "Arm1 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}",100,0,1,100,0,1);
-    Arm2VsDijetXi_ = fs->make<TH2D>("h_arm2vsdijetxi", "Arm2 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}",100,0,1,100,0,1);
+    Arm1VsDijetXi_ = fs->make<TH2D>("h_arm1vsdijetxi", "Arm1 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}", bins_, min_ max_, bins_, min_ max_);
+    Arm2VsDijetXi_ = fs->make<TH2D>("h_arm2vsdijetxi", "Arm2 Xi Vs Dijet Xi;xi_{proton};xi_{dijet}", bins_, min_ max_, bins_, min_ max_);
   }
 
   if(xiFromDilepton_)
   {
-    Arm1DileptonXi_ = fs->make<TH1D>("h_arm1dileptonxi","Arm1 Dilepton Xi;Xi;Events",100,0,1);
-    Arm2DileptonXi_ = fs->make<TH1D>("h_arm2dileptonxi","Arm2 Dilepton Xi;Xi;Events",100,0,1);
+    Arm1DileptonXi_ = fs->make<TH1D>("h_arm1dileptonxi","Arm1 Dilepton Xi;Xi;Events", bins_, min_ max_);
+    Arm2DileptonXi_ = fs->make<TH1D>("h_arm2dileptonxi","Arm2 Dilepton Xi;Xi;Events", bins_, min_ max_);
 
-    Arm1VsDileptonXi_ = fs->make<TH2D>("h_arm1vsdileptonxi", "Arm1 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}",100,0,1,100,0,1);
-    Arm2VsDileptonXi_ = fs->make<TH2D>("h_arm2vsdileptonxi", "Arm2 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}",100,0,1,100,0,1);
+    Arm1VsDileptonXi_ = fs->make<TH2D>("h_arm1vsdileptonxi", "Arm1 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}", bins_, min_ max_, bins_, min_ max_);
+    Arm2VsDileptonXi_ = fs->make<TH2D>("h_arm2vsdileptonxi", "Arm2 Xi Vs Dilepton Xi;xi_{proton};xi_{dilepton}", bins_, min_ max_, bins_, min_ max_);
   }
 
 
