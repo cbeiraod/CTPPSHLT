@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
       prepProcessor = "cp run_steamflow_cfg.py " + basePath + "/run_steamflow_cfg.py"
 
-      submissionCmd = "bsub -q " + args.queue + " -r -e " + logDirectory + "/err.log -o " + logDirectory + "/out.log" + basePath + "/job.sh"
+      submissionCmd = "bsub -q " + args.queue + " -r -e " + logDirectory + "/err.log -o " + logDirectory + "/out.log " + basePath + "/job.sh"
 
       if args.verbose:
         print prepConfig
