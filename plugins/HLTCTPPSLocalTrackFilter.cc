@@ -160,7 +160,7 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
   // so tracks from separate detectors might correspond to the same particle.
   // When/If the pixels are used in more than one RP, then the same situation can
   // happen within the pixels themselves. To be seen...
-  if(usePixel_)
+  if(usePixel_) // Pixels correspond to RP 220 in 2017 data
   {
     edm::Handle<edm::DetSetVector<CTPPSPixelLocalTrack>> pixelTracks;
     iEvent.getByToken(pixelLocalTrackToken_, pixelTracks);
@@ -182,7 +182,7 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
     }
   }
 
-  if(useStrip_)
+  if(useStrip_) // Strips correspond to RP 210 in 2017 data
   {
     edm::Handle<edm::DetSetVector<TotemRPLocalTrack>> stripTracks;
     iEvent.getByToken(stripLocalTrackToken_, stripTracks);

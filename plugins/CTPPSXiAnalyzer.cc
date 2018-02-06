@@ -421,7 +421,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   //double arm1DileptonXi = -1;
   //double arm2DileptonXi = -1;
 
-  if(usePixel_)
+  if(usePixel_) // Pixels correspond to RP 220 in 2017 data
   {
     edm::Handle<edm::DetSetVector<CTPPSPixelLocalTrack>> pixelTracks;
     iEvent.getByToken(pixelLocalTrackToken_, pixelTracks);
@@ -436,7 +436,11 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
         {
           double x_mm = track.getX0();
           // Here apply corrections to x
-          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
+          x_mm = x_mm + (-42.05);
+          if(x_mm < 0)
+            continue;
+
+          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
 
           if(id.arm() == 0)
           {
@@ -453,7 +457,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
     }
   }
 
-  if(useStrip_)
+  if(useStrip_) // Strips correspond to RP 210 in 2017 data
   {
     edm::Handle<edm::DetSetVector<TotemRPLocalTrack>> stripTracks;
     iEvent.getByToken(stripLocalTrackToken_, stripTracks);
@@ -468,7 +472,14 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
         {
           double x_mm = track.getX0();
           // Here apply corrections to x
-          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
+          if(id.arm() == 0) // arm45
+            x_mm = x_mm + (-3.7);
+          if(id.arm() == 1) // arm56
+            x_mm = x_mm + (-2.75);
+          if(x_mm < 0)
+            continue;
+
+          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
 
           if(id.arm() == 0)
           {
@@ -500,7 +511,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
         {
           double x_mm = track.getX0();
           // Here apply corrections to x
-          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~
+          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
 
           if(id.arm() == 0)
           {
