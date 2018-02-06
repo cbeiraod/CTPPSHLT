@@ -32,6 +32,8 @@ if __name__ == "__main__":
     "double": "list_cff2.py",
     "longer1": "list_cff3.py",
     "longer2": "list_cff4.py",
+    "longer3": "list_cff5.py",
+    "longer4": "list_cff6.py",
   }
 
   submitOrder = [
@@ -39,6 +41,8 @@ if __name__ == "__main__":
                   "double",
                   "longer1",
                   "longer2",
+                  "longer3",
+                  "longer4",
                 ]
 
   maxTracks = {
