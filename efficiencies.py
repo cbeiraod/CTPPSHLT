@@ -6415,7 +6415,7 @@ process.hltL1DoubleJet150 = cms.EDFilter( "HLTL1TSeed",
     L1GlobalInputTag = cms.InputTag( "hltGtStage2Digis" )
 )
 
-maxTracksPerArm = 1
+from theMaxTracks import maxTracksPerArm
 
 process.TFileService = cms.Service("TFileService",
                                    fileName = cms.string( "out.root" )

@@ -1,0 +1,1 @@
+maxTracksPerArm = 1
