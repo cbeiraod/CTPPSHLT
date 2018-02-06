@@ -44,8 +44,8 @@ if __name__ == "__main__":
   for fileSet in inputFiles:
     assure_path_exists(args.outDirectory + "/" + fileSet)
     for trackSet in maxTracks:
-      basePath = os.path.realpath(args.outDirectory + "/" + fileSet + "/" + trackSet)
-      logDirectory = os.path.realpath(os.getcwd() + "/logs/" + fileSet + "/" + trackSet)
+      basePath = os.path.realpath(args.outDirectory + "/" + fileSet + "/" + trackSet + "/")
+      logDirectory = os.path.realpath(os.getcwd() + "/logs/" + fileSet + "/" + trackSet + "/")
       assure_path_exists(basePath)
       assure_path_exists(logDirectory)
 
