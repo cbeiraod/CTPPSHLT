@@ -42,12 +42,12 @@ if __name__ == "__main__":
   }
 
   for fileSet in inputFiles:
-    assure_path_exists(args.outDirectory + "/" + fileSet)
+    assure_path_exists(args.outDirectory + "/" + fileSet + "/dummy")
     for trackSet in maxTracks:
-      basePath = os.path.realpath(args.outDirectory + "/" + fileSet + "/" + trackSet + "/")
-      logDirectory = os.path.realpath(os.getcwd() + "/logs/" + fileSet + "/" + trackSet + "/")
-      assure_path_exists(basePath)
-      assure_path_exists(logDirectory)
+      basePath = os.path.realpath(args.outDirectory + "/" + fileSet + "/" + trackSet)
+      logDirectory = os.path.realpath(os.getcwd() + "/logs/" + fileSet + "/" + trackSet)
+      assure_path_exists(basePath + "/dummy")
+      assure_path_exists(logDirectory + "/dummy")
 
       with open(basePath + "/job.sh", 'w') as jobFile:
         jobFile.write("#!/bin/bash\n\n")
