@@ -29,7 +29,17 @@ if __name__ == "__main__":
 
   inputFiles = {
     "base": "list_cff.py",
+    "double": "list_cff2.py",
+    "longer1": "list_cff3.py",
+    "longer2": "list_cff4.py",
   }
+
+  submitOrder = [
+                  "base",
+                  "double",
+                  "longer1",
+                  "longer2",
+                ]
 
   maxTracks = {
     "allTracks": -1,
@@ -41,7 +51,7 @@ if __name__ == "__main__":
     "10Tracks": 10,
   }
 
-  for fileSet in inputFiles:
+  for fileSet in submitOrder:
     assure_path_exists(args.outDirectory + "/" + fileSet + "/dummy")
     for trackSet in maxTracks:
       basePath = os.path.realpath(args.outDirectory + "/" + fileSet + "/" + trackSet)
