@@ -94,6 +94,8 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
       edm::InputTag electronInputTag_;
       edm::InputTag muonInputTag_;
 
+      bool saveTTree_;
+
 
       edm::EDGetTokenT<edm::DetSetVector<CTPPSPixelLocalTrack>> pixelLocalTrackToken_;
       edm::EDGetTokenT<edm::DetSetVector<TotemRPLocalTrack>> stripLocalTrackToken_;
@@ -176,6 +178,24 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
 
       TH1D* DileptonMassFraction_;
       TH1D* DileptonRapidityDifference_;
+
+      TTree* protonTTree_;
+
+      size_t protonTTreeArm_;
+      double protonTTreeRawX_;
+      double protonTTreeX_;
+      double protonTTreeXi_;
+      size_t protonTTreeDetector_;
+      /*double diprotonArm1X_;
+      double diprotonArm2X_;
+      double diprotonArm1Xi_;
+      double diprotonArm2Xi_;
+      double diprotonMass_;
+      double diprotonRapidity_;
+      double dijetMass_;
+      double dijetRapidity_;
+      double dijetArm1Xi_;
+      double dijetArm2Xi_;*/
 };
 
 void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions)
@@ -233,6 +253,9 @@ void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descripti
   desc.add<edm::InputTag>("muonInputTag",   edm::InputTag("slimmedMuons")) // TODO: change default to the reco value, not the miniaod value
     ->setComment("input tag of the muon collection");
 
+  desc.add<bool>("saveTTree", false)
+    ->setComment("whether to save the values in a ttree");
+
   descriptions.add("ctppsXiAnalyzer", desc);
   return;
 }
@@ -258,6 +281,7 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
   jetInputTag_               (iConfig.getParameter< edm::InputTag > ("jetInputTag")),
   electronInputTag_          (iConfig.getParameter< edm::InputTag > ("electronInputTag")),
   muonInputTag_              (iConfig.getParameter< edm::InputTag > ("muonInputTag")),
+  saveTTree_                 (iConfig.getParameter< bool          > ("saveTTree")),
   usePixel_   (false),
   useStrip_   (false),
   useDiamond_ (false)
@@ -375,6 +399,26 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
     DileptonRapidityDifference_ = fs->make<TH1D>(buildName("h_dileptonRapidityDifference", suffix_).c_str(), "Rapidity Difference;y_{dilepton}-y_{proton}", 100, -1.0, 1.0);
   }
 
+  if(saveTTree_)
+  {
+    if(detectorBitset_ != 0)
+    {
+      protonTTree_ = fs->make<TTree>(buildName("protonTTree", suffix_).c_str(), "Proton TTree");
+
+      protonTTree_->Branch("detector_id", &protonTTreeDetector_);
+      protonTTree_->Branch("arm_id", &protonTTreeArm_);
+      protonTTree_->Branch("raw_x", &protonTTreeRawX_);
+      protonTTree_->Branch("x", &protonTTreeX_);
+      protonTTree_->Branch("xi", &protonTTreeXi_);
+    }
+
+    if(xiFromDijet_)
+    {}
+
+    if(xiFromDilepton_)
+    {}
+  }
+
 
 
   std::stringstream message;
@@ -437,10 +481,22 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
           double x_mm = track.getX0();
           // Here apply corrections to x
           x_mm = x_mm + (-42.05);
-          if(x_mm < 0)
-            continue;
 
           double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
+
+          if(saveTTree_)
+          {
+            protonTTreeRawX_ = track.getX0();
+            protonTTreeX_ = x_mm;
+            protonTTreeXi_ = xi;
+            protonTTreeArm_ = id.arm();
+            protonTTreeDetector_ = 1;
+
+            protonTTree_->Fill();
+          }
+
+          if(x_mm < 0)
+            continue;
 
           if(id.arm() == 0)
           {
@@ -476,10 +532,22 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
             x_mm = x_mm + (-3.7);
           if(id.arm() == 1) // arm56
             x_mm = x_mm + (-2.75);
-          if(x_mm < 0)
-            continue;
 
           double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
+
+          if(saveTTree_)
+          {
+            protonTTreeRawX_ = track.getX0();
+            protonTTreeX_ = x_mm;
+            protonTTreeXi_ = xi;
+            protonTTreeArm_ = id.arm();
+            protonTTreeDetector_ = 2;
+
+            protonTTree_->Fill();
+          }
+
+          if(x_mm < 0)
+            continue;
 
           if(id.arm() == 0)
           {
@@ -512,6 +580,17 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
           double x_mm = track.getX0();
           // Here apply corrections to x
           double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
+
+          if(saveTTree_)
+          {
+            protonTTreeRawX_ = track.getX0();
+            protonTTreeX_ = x_mm;
+            protonTTreeXi_ = xi;
+            protonTTreeArm_ = id.arm();
+            protonTTreeDetector_ = 3;
+
+            protonTTree_->Fill();
+          }
 
           if(id.arm() == 0)
           {
