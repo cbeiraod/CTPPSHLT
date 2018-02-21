@@ -181,11 +181,11 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
 
       TTree* protonTTree_;
 
-      size_t protonTTreeArm_;
+      unsigned int protonTTreeArm_;
       double protonTTreeRawX_;
       double protonTTreeX_;
       double protonTTreeXi_;
-      size_t protonTTreeDetector_;
+      unsigned int protonTTreeDetector_;
       /*double diprotonArm1X_;
       double diprotonArm2X_;
       double diprotonArm1Xi_;
@@ -489,7 +489,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
             protonTTreeRawX_ = track.getX0();
             protonTTreeX_ = x_mm;
             protonTTreeXi_ = xi;
-            protonTTreeArm_ = id.arm();
+            protonTTreeArm_ = static_cast<unsigned int>(id.arm());
             protonTTreeDetector_ = 1;
 
             protonTTree_->Fill();
@@ -540,7 +540,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
             protonTTreeRawX_ = track.getX0();
             protonTTreeX_ = x_mm;
             protonTTreeXi_ = xi;
-            protonTTreeArm_ = id.arm();
+            protonTTreeArm_ = static_cast<unsigned int>(id.arm());
             protonTTreeDetector_ = 2;
 
             protonTTree_->Fill();
@@ -586,7 +586,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
             protonTTreeRawX_ = track.getX0();
             protonTTreeX_ = x_mm;
             protonTTreeXi_ = xi;
-            protonTTreeArm_ = id.arm();
+            protonTTreeArm_ = static_cast<unsigned int>(id.arm());
             protonTTreeDetector_ = 3;
 
             protonTTree_->Fill();
