@@ -498,6 +498,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   double jetRapidity = -999;
   //double arm1DileptonXi = -1;
   //double arm2DileptonXi = -1;
+  double D = 7.0;
 
   if(usePixel_) // Pixels correspond to RP 220 in 2017 data
   {
@@ -516,7 +517,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
           // Here apply corrections to x
           x_mm = x_mm + (-42.05);
 
-          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
+          double xi = (x_mm*0.001)/(D*0.01); // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
 
           if(saveTTree_)
           {
@@ -567,7 +568,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
           if(id.arm() == 1) // arm56
             x_mm = x_mm + (-2.75);
 
-          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
+          double xi = (x_mm*0.001)/(D*0.01); // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
 
           if(saveTTree_)
           {
@@ -613,7 +614,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
         {
           double x_mm = track.getX0();
           // Here apply corrections to x
-          double xi = (x_mm*0.001)/7.5; // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
+          double xi = (x_mm*0.001)/(D*0.01); // Convert to meters and use nominal optics x = D * xi, D ~ 7.5
 
           if(saveTTree_)
           {
