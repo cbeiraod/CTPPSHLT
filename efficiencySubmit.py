@@ -10,16 +10,19 @@ def assure_path_exists(path):
     os.makedirs(dir)
 
 def create_cff_from_file_list(desc, filesToProcess, filesPerCff=3):
-  numberOfCff = len(filesToProcess)
+  numberOfCff = len(filesToProcess)/filesPerCff
+  if len(filesToProcess)%filesPerCff is not 0:
+    numberOfCff = numberOfCff + 1
+  
   for cffNumber in range(numberOfCff):
     cffID = "extension" + str(cffNumber).zfill(3)
     cffName = "fileLists/" + cffID + "_cff.py"
     with open(cffName, "w") as file:
-      file.write("inputFileNames = [")
+      file.write("inputFileNames = [\n")
       for index in range(filesPerCff):
-        file.write('"' + filesToProcess[cffNumber*filesPerCff + index] + '",')
-      file.write("]")
-      file.write("")
+        if cffNumber*filesPerCff + index < len(filesToProcess):
+          file.write('"' + filesToProcess[cffNumber*filesPerCff + index] + '",\n')
+      file.write("]\n")
 
     desc[cffID] = cffName
 
