@@ -113,11 +113,11 @@ HLTCTPPSLocalTrackFilter::HLTCTPPSLocalTrackFilter(const edm::ParameterSet& iCon
   useStrip_   (false),
   useDiamond_ (false)
 {
-  if(detectorBitset_ | 1)
+  if(detectorBitset_ & 1)
     usePixel_ = true;
-  if(detectorBitset_ | 2)
+  if(detectorBitset_ & 2)
     useStrip_ = true;
-  if(detectorBitset_ | 4)
+  if(detectorBitset_ & 4)
     useDiamond_ = true;
 
   if(usePixel_)
