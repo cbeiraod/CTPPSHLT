@@ -44,6 +44,7 @@
 #include "TH2D.h"
 #include "TH1D.h"
 #include "TTree.h"
+#include "TFile.h"
 
 #include <sstream>
 #include <vector>
@@ -66,7 +67,7 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
    private:
       //virtual void beginJob() override;
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
-      //virtual void endJob() override;
+      virtual void endJob() override;
 
       // ----------member data ---------------------------
 
@@ -180,6 +181,7 @@ class CTPPSXiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>
       TH1D* DileptonMassFraction_;
       TH1D* DileptonRapidityDifference_;
 
+      TFile* protonTFile_;
       TTree* protonTTree_;
 
       unsigned int protonTTreeArm_;
@@ -289,11 +291,11 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
 {
   usesResource("TFileService");
 
-  if(detectorBitset_ | 1)
+  if(detectorBitset_ & 1)
     usePixel_ = true;
-  if(detectorBitset_ | 2)
+  if(detectorBitset_ & 2)
     useStrip_ = true;
-  if(detectorBitset_ | 4)
+  if(detectorBitset_ & 4)
     useDiamond_ = true;
 
   if(usePixel_)
@@ -402,9 +404,16 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
 
   if(saveTTree_)
   {
+    TDirectory* cwd = gDirectory;
+
     if(detectorBitset_ != 0)
     {
-      protonTTree_ = fs->make<TTree>(buildName("protonTTree", suffix_).c_str(), "Proton TTree");
+      //protonTTree_ = fs->makeAndRegister<TTree>(buildName("protonTTree", suffix_).c_str(), "Proton TTree");
+      TDirectory* outDir = fs->getBareDirectory();
+      outDir->cd();
+      //protonTFile_ = new TFile("protons.root", "RECREATE");
+      //protonTFile_->cd();
+      protonTTree_ = new TTree(buildName("protonTTree", suffix_).c_str(), "Proton TTree");
 
       protonTTree_->Branch("detector_id", &protonTTreeDetector_);
       protonTTree_->Branch("arm_id", &protonTTreeArm_);
@@ -418,6 +427,8 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
 
     if(xiFromDilepton_)
     {}
+
+    cwd->cd();
   }
 
 
@@ -442,7 +453,29 @@ CTPPSXiAnalyzer::CTPPSXiAnalyzer(const edm::ParameterSet& iConfig):
   return;
 }
 
-CTPPSXiAnalyzer::~CTPPSXiAnalyzer()= default;
+CTPPSXiAnalyzer::~CTPPSXiAnalyzer()=default;
+
+void CTPPSXiAnalyzer::endJob()
+{
+  if(saveTTree_)
+  {
+    TDirectory* cwd = gDirectory;
+
+    if(detectorBitset_ != 0)
+    {
+      TDirectory* outDir = fs->getBareDirectory();
+      outDir->cd();
+      //protonTFile_->cd();
+      protonTTree_->Write();
+      //protonTFile_->Write();
+      //protonTFile_->Close();
+    }
+
+    cwd->cd();
+  }
+
+  return;
+}
 
 struct protonReco
 {
