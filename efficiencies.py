@@ -6424,8 +6424,9 @@ process.TFileService = cms.Service("TFileService",
 # xi Producer
 process.load("UserCode.CTPPSHLT.ctppsXiAnalyzer_cfi")
 process.ctppsXiAnalyzer.xiFromDijet = cms.bool(True)
-process.ctppsXiAnalyzer.maxXi = cms.double(0.03)
-process.ctppsXiAnalyzer.jetInputTag = cms.InputTag("hltAK4PFJets")
+process.ctppsXiAnalyzer.maxXi = cms.double(0.4)
+process.ctppsXiAnalyzer.jetInputTag = cms.InputTag("hltAK4PFJetsCorrected")
+process.ctppsXiAnalyzer.saveTTree = cms.bool(True)
 
 process.ctppsAll                 = process.ctppsXiAnalyzer.clone()
 process.ctppsCoincidence         = process.ctppsXiAnalyzer.clone()
