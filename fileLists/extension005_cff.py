@@ -1,19 +1,5 @@
 inputFileNames = [
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/1EF0475B-DFAD-E711-BFED-02163E0144EC.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/1EFCBDDB-C8AD-E711-BE4B-02163E013627.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/20EF943C-DDAD-E711-BF55-02163E011AC7.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/22024AAA-B9AD-E711-A3F3-02163E01A4D6.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/221BBAD2-D0AD-E711-B45D-02163E01427E.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/244BD0CF-D6AD-E711-8CD7-02163E011B48.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/245CDE59-C9AD-E711-98AF-02163E01348D.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/2470E88F-D9AD-E711-B178-02163E0138F7.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/2630C05C-E1AD-E711-A667-02163E01365F.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/264C2015-C1AD-E711-8F8F-02163E019C83.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/267C5C27-BBAD-E711-B646-02163E014705.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/267D8CED-BEAD-E711-9CAB-02163E01A79B.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/26917E37-D8AD-E711-A5D3-02163E019B83.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/26A628F7-DBAD-E711-9DEB-02163E01213A.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/26D3758D-D5AD-E711-9F64-02163E01365F.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/26E7796A-BDAD-E711-978E-02163E013550.root',
-'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/285CC9A3-E0AD-E711-9569-02163E01A2FF.root'
+'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/044E148C-D0AD-E711-AA94-02163E01A38F.root',
+'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/04709FF5-DCAD-E711-ABB7-02163E013501.root',
+'file:///eos/cms/tier0/store/data/Run2017E/EphemeralHLTPhysics1/RAW/v1/000/304/777/00000/04D6C88C-D9AD-E711-A030-02163E0144FD.root'
 ]
