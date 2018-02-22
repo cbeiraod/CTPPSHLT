@@ -464,7 +464,7 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   double jetRapidity = -999;
   //double arm1DileptonXi = -1;
   //double arm2DileptonXi = -1;
-  double D = 7.5;
+  double D = 7.0;
 
   if(usePixel_) // Pixels correspond to RP 220 in 2017 data
   {

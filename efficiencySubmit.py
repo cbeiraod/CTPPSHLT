@@ -9,6 +9,22 @@ def assure_path_exists(path):
   if not os.path.exists(dir):
     os.makedirs(dir)
 
+def create_cff_from_file_list(desc, filesToProcess, filesPerCff=3):
+  numberOfCff = len(filesToProcess)
+  for cffNumber in range(numberOfCff):
+    cffID = "extension" + str(cffNumber).zfill(3)
+    cffName = "fileLists/" + cffID + "_cff.py"
+    with open(cffName, "w") as file:
+      file.write("inputFileNames = [")
+      for index in range(filesPerCff):
+        file.write('"' + filesToProcess[cffNumber*filesPerCff + index] + '",')
+      file.write("]")
+      file.write("")
+
+    desc[cffID] = cffName
+
+  return desc
+
 if __name__ == "__main__":
   import argparse
   import os
@@ -27,23 +43,19 @@ if __name__ == "__main__":
   if not args.dryRun:
     print "You did not enable dry run. You are on your own!"
 
+  from filesToProcess import files as filesToProcess
+
   inputFiles = {
-    "base": "list_cff.py",
-    "double": "list_cff2.py",
-    "longer1": "list_cff3.py",
-    "longer2": "list_cff4.py",
-    "longer3": "list_cff5.py",
-    "longer4": "list_cff6.py",
+    "base": "fileLists/baseList_cff.py",
   }
+  inputFiles = create_cff_from_file_list(inputFiles, filesToProcess)
 
   submitOrder = [
                   "base",
-                  "double",
-                  "longer1",
-                  "longer2",
-                  "longer3",
-                  "longer4",
                 ]
+  for key in inputFiles:
+    if key not in submitOrder:
+      submitOrder = submitOrder + [key]
 
   maxTracks = {
     "allTracks": -1,
