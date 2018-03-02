@@ -42,6 +42,8 @@ if __name__ == "__main__":
     },
   }
 
+  ROOT.gROOT.SetOptStat(0)
+
   file = ROOT.TFile.Open(args.inputFile, "READ")
   assure_path_exists(args.outDirectory + "/dummy")
   if args.verbose:
@@ -62,7 +64,6 @@ if __name__ == "__main__":
       if plots[plotName]["logz"]:
         canvas.SetLogz()
       hist.Draw()
-      hist.SetStat(0)
 
       canvas.Update()
       canvas.SaveAs(args.outDirectory + "/" + condition + "_" + plotName + ".png")
