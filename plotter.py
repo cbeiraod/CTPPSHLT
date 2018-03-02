@@ -26,26 +26,29 @@ if __name__ == "__main__":
 
   plots = {
     "Arm1Xi": {
-      "name": "h_Arm1xi",
+      "name": "h_arm1xi",
       "logy": False,
       "logz": False,
     },
     "Arm2Xi": {
-      "name": "h_Arm2xi",
+      "name": "h_arm2xi",
       "logy": False,
       "logz": False,
     },
   }
 
   file = ROOT.TFile.Open(args.inputFile, "READ")
+  print file
 
   for condition in toPlot:
     plotDirectory = file.Get(toPlot[condition])
+    print plotDirectory
     for plotName in plots:
       plot = plotDirectory.Get(plots[plotName]["name"])
+      print plot
 
-      canvas = ROOT.TCanvas(800,800)
-      plot->Draw();
+      canvas = ROOT.TCanvas(plotName + "_canvas", plotName, 800, 800)
+      plot.Draw();
       canvas.SaveAs("test.png")
       break
     break
