@@ -236,9 +236,9 @@ void CTPPSXiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descripti
 
   desc.add<double>("minMass", 100.0)
     ->setComment("The minimum number on the Mass axis of the plots");
-  desc.add<double>("maxMass", 400.0)
+  desc.add<double>("maxMass", 700.0)
     ->setComment("The maximum number on the Mass axis of the plots");
-  desc.add<int>("binsMass", 100)
+  desc.add<int>("binsMass", 200)
     ->setComment("The bins on the Mass axis of the plots");
 
   desc.add<double>("minRapidity", -1.8)
@@ -533,12 +533,12 @@ void CTPPSXiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& i
           if(x_mm < 0)
             continue;
 
-          if(id.arm() == 0)
+          if(id.arm() == 1)
           {
             arm1Xis.push_back(xi);
             Arm1Xi_->Fill(xi);
           }
-          if(id.arm() == 1)
+          if(id.arm() == 0)
           {
             arm2Xis.push_back(xi);
             Arm2Xi_->Fill(xi);
