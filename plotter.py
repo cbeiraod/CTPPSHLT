@@ -4,6 +4,11 @@ import re
 import time
 import shutil
 
+def assure_path_exists(path):
+  dir = os.path.dirname(path)
+  if not os.path.exists(dir):
+    os.makedirs(dir)
+
 if __name__ == "__main__":
   import argparse
   import os
@@ -12,7 +17,7 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser(description='Process the command line options')
   parser.add_argument('-d', '--dryRun', action='store_true', help='Do a dry run (i.e. do not actually run the potentially dangerous commands but print them to the screen)')
   parser.add_argument('-v', '--verbose', action='store_true', help='Whether to print verbose output')
-  #parser.add_argument('-o', '--outDirectory', required=True, help='Name of the output directory')
+  parser.add_argument('-o', '--outDirectory', required=True, help='Name of the output directory')
   parser.add_argument('-i', '--inputFile', required=True, help='Name of the input file')
 
   args = parser.parse_args()
@@ -38,6 +43,7 @@ if __name__ == "__main__":
   }
 
   file = ROOT.TFile.Open(args.inputFile, "READ")
+  assure_path_exists(args.outDirectory + "/dummy")
 
   for condition in toPlot:
     plotDirectory = file.Get(toPlot[condition])
