@@ -149,6 +149,8 @@ if __name__ == "__main__":
         canvas.SetLogy()
       if plots[plotName]["logz"]:
         canvas.SetLogz()
+      canvas.SetRightMargin(0.08)
+      canvas.SetLeftMargin(0.08)
 
       if plots[plotName]["opt"] is not "":
         hist.Draw(plots[plotName]["opt"])
