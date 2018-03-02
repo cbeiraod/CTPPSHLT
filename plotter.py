@@ -43,18 +43,18 @@ if __name__ == "__main__":
   }
 
   file = ROOT.TFile.Open(args.inputFile, "READ")
-<<<<<<< HEAD
   assure_path_exists(args.outDirectory + "/dummy")
-=======
-  print file
->>>>>>> 9b3ff801e57a02b07e28733799001df5b911c07b
+  if args.verbose:
+    print file
 
   for condition in toPlot:
     plotDirectory = file.Get(toPlot[condition])
-    print plotDirectory
+    if args.verbose:
+      print "  ", plotDirectory
     for plotName in plots:
       plot = plotDirectory.Get(plots[plotName]["name"])
-      print plot
+      if args.verbose:
+        print "    ", plot
 
       canvas = ROOT.TCanvas(plotName + "_canvas", plotName, 800, 800)
       plot.Draw();
