@@ -88,6 +88,8 @@ void HLTCTPPSLocalTrackFilter::fillDescriptions(edm::ConfigurationDescriptions& 
   desc.add<int>("maxTracksPerPot", -1)
     ->setComment("maximum number of tracks per roman pot of the CTPPS detector, if negative it will be ignored");
 
+  desc.add<int>("triggerType", trigger::TriggerTrack);
+
   descriptions.add("hltCTPPSLocalTrackFilter", desc);
   return;
 }
@@ -126,7 +128,7 @@ HLTCTPPSLocalTrackFilter::HLTCTPPSLocalTrackFilter(const edm::ParameterSet& iCon
   if(useDiamond_)
     diamondLocalTrackToken_ = consumes<edm::DetSetVector<CTPPSDiamondLocalTrack>>(diamondLocalTrackInputTag_);
 
-  LogDebug("") << "HLTCTPPSLocalTrackFilter: pixelTag/stripTag/diamondTag/bitset/minTracks/minTracksPerArm : "
+  LogDebug("") << "HLTCTPPSLocalTrackFilter: pixelTag/stripTag/diamondTag/bitset/minTracks/minTracksPerArm/maxTracks/maxTracksPerArm/maxTracksPerPot : "
                << pixelLocalTrackInputTag_.encode() << " "
                << stripLocalTrackInputTag_.encode() << " "
                << diamondLocalTrackInputTag_.encode() << " "
@@ -134,7 +136,8 @@ HLTCTPPSLocalTrackFilter::HLTCTPPSLocalTrackFilter(const edm::ParameterSet& iCon
                << minTracks_ << " "
                << minTracksPerArm_ << " "
                << maxTracks_ << " "
-               << maxTracksPerArm_;
+               << maxTracksPerArm_ << " "
+               << maxTracksPerPot_;
 }
 
 // Filter events, for triggering
@@ -176,10 +179,10 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
         {
           if(id.arm() == 0) ++arm45Tracks;
           if(id.arm() == 1) ++arm56Tracks;
-          tracksPerPot[rpv.id]++;
+          ++tracksPerPot[rpv.id];
         }
       }
-      // Still not able to get the line below to work, but it seems no one keeps DetSets, so it should be fine as is
+      // Still not able to get the line below to work
       //filterproduct.addObject(trigger::TriggerTrack, PixelRef(pixelTracks, rpv.id));
     }
   }
@@ -201,10 +204,10 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
         {
           if(id.arm() == 0) ++arm45Tracks;
           if(id.arm() == 1) ++arm56Tracks;
-          tracksPerPot[rpv.id]++;
+          ++tracksPerPot[rpv.id];
         }
       }
-      // Still not able to get the line below to work, but it seems no one keeps DetSets, so it should be fine as is
+      // Still not able to get the line below to work
       //filterproduct.addObject(trigger::TriggerTrack, StripRef(stripTracks, rpv.id));
     }
   }
@@ -226,11 +229,11 @@ bool HLTCTPPSLocalTrackFilter::hltFilter(edm::Event& iEvent, const edm::EventSet
         {
           if(id.arm() == 0) ++arm45Tracks;
           if(id.arm() == 1) ++arm56Tracks;
-          tracksPerPot[rpv.id]++;
+          ++tracksPerPot[rpv.id];
         }
       }
-      // Still not able to get the line below to work, but it seems no one keeps DetSets, so it should be fine as is
-      //filterproduct.addObject(trigger::TriggerTrack, StripRef(diamondTracks, rpv.id));
+      // Still not able to get the line below to work
+      //filterproduct.addObject(trigger::TriggerTrack, DiamondRef(diamondTracks, rpv.id));
     }
   }
 
