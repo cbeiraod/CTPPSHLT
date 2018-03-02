@@ -145,7 +145,7 @@ CTPPSInspect::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    for(const auto &rpv : (*rpTrack))
    {
      CTPPSPixelDetId id(rpv.id);
-     std::cout << "  Pot " << id << ":" << std::endl;
+     std::cout << "  Pot (" << rpv.id << ")" << id << ":" << std::endl;
 
      for(auto & track : rpv)
      {
