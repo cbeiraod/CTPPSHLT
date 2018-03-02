@@ -42,7 +42,7 @@ if __name__ == "__main__":
     },
   }
 
-  ROOT.gROOT.SetOptStat(0)
+  import tdrstyle
 
   file = ROOT.TFile.Open(args.inputFile, "READ")
   assure_path_exists(args.outDirectory + "/dummy")
