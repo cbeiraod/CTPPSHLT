@@ -58,6 +58,5 @@ if __name__ == "__main__":
 
       canvas = ROOT.TCanvas(plotName + "_canvas", plotName, 800, 800)
       plot.Draw();
-      canvas.SaveAs("test.png")
-      break
-    break
+      canvas.SaveAs(args.outDirectory + "/" + condition + "_" + plotName + ".png")
+      canvas.SaveAs(args.outDirectory + "/" + condition + "_" + plotName + ".pdf")
