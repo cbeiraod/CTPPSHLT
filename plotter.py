@@ -52,11 +52,18 @@ if __name__ == "__main__":
     if args.verbose:
       print "  ", plotDirectory
     for plotName in plots:
-      plot = plotDirectory.Get(plots[plotName]["name"])
+      hist = plotDirectory.Get(plots[plotName]["name"])
       if args.verbose:
         print "    ", plot
 
-      canvas = ROOT.TCanvas(plotName + "_canvas", plotName, 800, 800)
-      plot.Draw();
+      canvas = ROOT.TCanvas(plotName + "_canvas", plotName + "_canvas", 800, 450)
+      if plots[plotName]["logy"]:
+        canvas.SetLogy()
+      if plots[plotName]["logz"]:
+        canvas.SetLogz()
+      hist.Draw()
+      hist.SetStat(0)
+
+      canvas.Update()
       canvas.SaveAs(args.outDirectory + "/" + condition + "_" + plotName + ".png")
       canvas.SaveAs(args.outDirectory + "/" + condition + "_" + plotName + ".pdf")
